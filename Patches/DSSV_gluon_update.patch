@@ -1,0 +1,91 @@
+--- DSSV_gluon_update.f	2018-12-15 20:53:26.000000000 +0100
++++ DSSV_gluon_update-new.f	2021-05-21 14:43:47.410657826 +0200
+@@ -114,13 +114,16 @@
+       DUBAR = DFINT(NARG,XT,NA,ARRF,XUBF) * (1.D0-X)**8 * X**0.5
+       DDBAR = DFINT(NARG,XT,NA,ARRF,XDBF) * (1.D0-X)**8 * X**0.5
+       DSTR  = DFINT(NARG,XT,NA,ARRF,XSF)  * (1.D0-X)**8 * X**0.5
+-      DGLU  = DFINT(NARG,XT,NA,ARRF,XGF)  * (1.D0-X)**5 * X**1.0
++cfhe change small x gluon coefficient to 0.5 (from 1.0) as suggested by Werner
++      DGLU  = DFINT(NARG,XT,NA,ARRF,XGF)  * (1.D0-X)**5 * X**0.5
+ C...
+  60   RETURN
+       END
+ C
+ C---------------------------
+-      SUBROUTINE DSSVINI
++      SUBROUTINE DSSVINI(RPATH,IMEMBER)
++cf2py intent(in) RPATH
++cf2py intent(in) IMEMBER
+ C---------------------------
+       IMPLICIT NONE
+ C...
+@@ -135,6 +138,12 @@
+       DOUBLE PRECISION XB0, XB1
+       INTEGER M, N
+       INTEGER IQ, IX
++
++      INTEGER IMEMBER
++      CHARACTER*100 RPATH
++      CHARACTER*30 FPATH
++      CHARACTER*130 PATH
++
+ C...
+       COMMON/ DSSVGRID/XUF, XDF, XUBF, XDBF, XSF, XGF,
+      1                NA, ARRF
+@@ -158,11 +167,25 @@
+ C      imode= 0 best fit DSSV
+ 
+ 
+-c      if (imode.eq.0) then
+-            OPEN(UNIT=71,FILE='DSSV_GLUON_UPDATE.NLO',STATUS='OLD')
+-c       else
+-c            write(6,*) "wrong fit"
+-c      endif      
++
++cfhe allow change of member, use dynamic path
++      if (IMEMBER.eq.0) then
++          write(FPATH,*) 'DSSV_GLUON_UPDATE.NLO'
++      else
++          if((IMEMBER.lt.1) .or. (IMEMBER.gt.22)) then
++              write(6,*) "IMEMBER has to be in range [0,22]"
++              return
++          endif
++          if ((IMEMBER.lt.10)) then
++              write(FPATH,'(a,i1,a)') 'DSSV_V',IMEMBER,'.GRID'
++          else
++              write(FPATH,'(a,i2,a)') 'DSSV_V',IMEMBER,'.GRID'
++          endif
++      endif
++      WRITE (PATH,'(a,a)') TRIM(ADJUSTL(RPATH)),
++     1 TRIM(ADJUSTL(FPATH))
++      OPEN(UNIT=71,FILE=PATH,STATUS='OLD')
++cfhe
+ 
+ C...
+       DO 15 M = 1, NX-1
+@@ -185,7 +208,7 @@
+             XUBF(IX,IQ) = PARTON(3,IQ,IX) / (XB1**8 * XB0**0.5) 
+             XDBF(IX,IQ) = PARTON(4,IQ,IX) / (XB1**8 * XB0**0.5) 
+             XSF(IX,IQ)  = PARTON(5,IQ,IX) / (XB1**8 * XB0**0.5) 
+-            XGF(IX,IQ)  = PARTON(6,IQ,IX) / (XB1**5 * XB0**1.0)
++            XGF(IX,IQ)  = PARTON(6,IQ,IX) / (XB1**5 * XB0**0.5)
+   20      CONTINUE
+          XUF(NX,IQ)  = 0.D0
+          XDF(NX,IQ)  = 0.D0
+@@ -209,9 +232,15 @@
+ *
+ *...CERN LIBRARY ROUTINE E104 (INTERPOLATION) :
+ *
++cfhe TODO: rename DFINT to DSSV_DFINT?
++cfhe due to name clash with possible other code, e.g. GRSV
+       FUNCTION DFINT(NARG,ARG,NENT,ENT,TABLE)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+-      DIMENSION ARG(5),NENT(5),ENT(73),TABLE(1200)
++cfhe gfortran v8 requires exact match for size of ARG, NENT
++cfhe      DIMENSION ARG(5),NENT(5),ENT(73),TABLE(1200)
++      DIMENSION ARG(2),NENT(2),ENT(73),TABLE(1200)
++cfhe
++      
+       DIMENSION D(5),NCOMB(5),IENT(5)
+       KD=1
+       M=1

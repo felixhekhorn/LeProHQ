@@ -1,0 +1,139 @@
+--- ../../../../PDF/GRSV96/grsvpol.f	2018-12-15 20:53:26.000000000 +0100
++++ grsvpol.f	2018-12-15 20:55:20.000000000 +0100
+@@ -47,15 +47,24 @@
+ *                                                                   *
+ *********************************************************************
+ *
+-      SUBROUTINE PARPOL (ISET, X, Q2, UV, DV, QB, ST, GL)
++cfhe      SUBROUTINE PARPOL (ISET, X, Q2, UV, DV, QB, ST, GL)
++      SUBROUTINE PARPOL (PATH, X, Q2, UV, DV, QB, ST, GL)
++cfhe
++      
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
++      
++cfhe
++      CHARACTER*130 PATH
++cfhe
++
+       PARAMETER (NPART=5, NX=42, NQ=21, NARG=2)
+       DIMENSION XUVF(NX,NQ), XDVF(NX,NQ), XQBF(NX,NQ), 
+      1          XSF(NX,NQ), XGF(NX,NQ), XGPF(NX,NQ), XGNF(NX,NQ),
+      2          PARTON (NPART,NQ,NX-1), 
+      3          QS(NQ), XB(NX), XT(NARG), NA(NARG), ARRF(NX+NQ) 
+       COMMON / INTINI / IINI
+-      SAVE XUVF, XDVF, XQBF, XSF, XGF, XGPF, XGNF, NA, ARRF
++
++       SAVE XUVF, XDVF, XQBF, XSF, XGF, XGPF, XGNF, NA, ARRF
+ *...BJORKEN-X AND Q**2 VALUES OF THE GRID :
+        DATA QS / 0.4D0, 0.75D0, 1.0D0, 1.5D0, 2.5D0, 
+      1           4.0D0, 6.4D0, 1.0D1, 1.5D1, 2.5D1, 4.0D1, 6.4D1,
+@@ -88,24 +97,30 @@
+ *                                                  GRID: 1.731E-03 )     
+ *    FILE - NO. = 44 FOR  LO 'VALENCE'  SCENARIO ( FIRST NUMBER IN THE 
+ *                                                  GRID: 1.846E-03 )     
+-      IF (IINI.NE.0) GOTO 16
+-      IF (ISET.EQ.1) THEN
+-       IIREAD=11       
+-       OPEN(UNIT=11,FILE='STDNLO.GRID',STATUS='OLD')
+-      ELSE IF (ISET.EQ.2) THEN
+-       IIREAD=22
+-       OPEN(UNIT=22,FILE='VALNLO.GRID',STATUS='OLD')
+-      ELSE IF (ISET.EQ.3) THEN
+-       IIREAD=33       
+-       OPEN(UNIT=33,FILE='STDLO.GRID',STATUS='OLD')
+-      ELSE IF (ISET.EQ.4) THEN
+-       IIREAD=44
+-       OPEN(UNIT=44,FILE='VALLO.GRID',STATUS='OLD')
+-      ELSE
+-        WRITE(6,93)
+-  93    FORMAT (2X,'PARTON INTERPOLATION: ISET OUT OF RANGE')
+-        GOTO 60
+-      END IF
++       IF (IINI.NE.0) GOTO 16
++cfhe      IF (ISET.EQ.1) THEN
++cfhe       IIREAD=11       
++cfhe       OPEN(UNIT=11,FILE='STDNLO.GRID',STATUS='OLD')
++cfhe      ELSE IF (ISET.EQ.2) THEN
++cfhe       IIREAD=22
++cfhe       OPEN(UNIT=22,FILE='VALNLO.GRID',STATUS='OLD')
++cfhe      ELSE IF (ISET.EQ.3) THEN
++cfhe       IIREAD=33       
++cfhe       OPEN(UNIT=33,FILE='STDLO.GRID',STATUS='OLD')
++cfhe      ELSE IF (ISET.EQ.4) THEN
++cfhe       IIREAD=44
++cfhe       OPEN(UNIT=44,FILE='VALLO.GRID',STATUS='OLD')
++cfhe      ELSE
++cfhe        WRITE(6,93)
++cfhe  93    FORMAT (2X,'PARTON INTERPOLATION: ISET OUT OF RANGE')
++cfhe        GOTO 60
++cfhe      END IF
++
++cfhe   Change to read a given file path
++       IIREAD = 99
++       OPEN(UNIT=IIREAD,FILE=PATH,STATUS='OLD')
++cfhe
++
+ C
+        DO 15 M = 1, NX-1 
+        DO 15 N = 1, NQ
+@@ -113,6 +128,12 @@
+      1                 PARTON(4,N,M), PARTON(5,N,M)
+   90   FORMAT (5(1PE10.3))
+   15   CONTINUE
++
++
++cfhe 
++       CLOSE(IIREAD)
++cfhe
++
+ C
+       IINI = 1
+ *....ARRAYS FOR THE INTERPOLATION SUBROUTINE :
+@@ -144,19 +165,22 @@
+ *...INTERPOLATION :
+       XT(1) = DLOG(X)
+       XT(2) = DLOG(Q2)
+-      UV = DFINT(NARG,XT,NA,ARRF,XUVF) * (1.D0-X)**3 * X**0.7
+-      DV = DFINT(NARG,XT,NA,ARRF,XDVF) * (1.D0-X)**4 * X**0.6 
+-      QB = DFINT(NARG,XT,NA,ARRF,XQBF) * (1.D0-X)**7 * X**0.3
+-      ST = DFINT(NARG,XT,NA,ARRF,XSF)  * (1.D0-X)**7 * X**0.3
+-      GL = DFINT(NARG,XT,NA,ARRF,XGF)  * (1.D0-X)**10 * X**0.3
++      UV = GRSV_DFINT(NARG,XT,NA,ARRF,XUVF) * (1.D0-X)**3 * X**0.7
++      DV = GRSV_DFINT(NARG,XT,NA,ARRF,XDVF) * (1.D0-X)**4 * X**0.6 
++      QB = GRSV_DFINT(NARG,XT,NA,ARRF,XQBF) * (1.D0-X)**7 * X**0.3
++      ST = GRSV_DFINT(NARG,XT,NA,ARRF,XSF)  * (1.D0-X)**7 * X**0.3
++      GL = GRSV_DFINT(NARG,XT,NA,ARRF,XGF)  * (1.D0-X)**10 * X**0.3
+  60   RETURN
+       END
+ *
+ *...CERN LIBRARY ROUTINE E104 (INTERPOLATION) :
+ *
+-      FUNCTION DFINT(NARG,ARG,NENT,ENT,TABLE)
++      FUNCTION GRSV_DFINT(NARG,ARG,NENT,ENT,TABLE)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+-      DIMENSION ARG(5),NENT(5),ENT(63),TABLE(882)
++cfhe gfortran v8 requires exact match for size of ARG, NENT
++cfhe      DIMENSION ARG(5),NENT(5),ENT(63),TABLE(882)
++      DIMENSION ARG(2),NENT(2),ENT(63),TABLE(882)
++cfhe
+       DIMENSION D(5),NCOMB(5),IENT(5)
+       KD=1
+       M=1
+@@ -176,7 +200,7 @@
+       KD=KD+IENT(I)*M
+       M=M*NENT(I)
+     5 JA=JB+1
+-      DFINT=0.D0
++      GRSV_DFINT=0.D0
+    10 FAC=1.D0
+       IADR=KD
+       IFADR=1
+@@ -187,7 +211,7 @@
+    12 FAC=FAC*D(I)
+       IADR=IADR-IFADR
+    15 IFADR=IFADR*NENT(I)
+-      DFINT=DFINT+FAC*TABLE(IADR)
++      GRSV_DFINT=GRSV_DFINT+FAC*TABLE(IADR)
+       IL=NARG
+    40 IF (NCOMB(IL).EQ.0) GO TO 80
+       NCOMB(IL)=0

@@ -1,9 +1,23 @@
 # LeProHQ
 (Un-)Polarized Lepto-Production of Heavy Quarks.
 
+[![thesis](https://img.shields.io/badge/DOI-%20%20%20%2010.15496%2Fpublikation--34811-blue)](https://inspirehep.net/literature/1757437)
+
 ## Citation Policy
 
 Please cite
+```bibtex
+@phdthesis{Hekhorn:2019nlf,
+    author = "Hekhorn, Felix",
+    title = "{Next-to-Leading Order QCD Corrections to Heavy-Flavour Production in Neutral Current DIS}",
+    eprint = "1910.01536",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-ph",
+    doi = "10.15496/publikation-34811",
+    school = "Tubingen U., Math. Inst.",
+    year = "2019"
+}
+```
 
 ## Structure of this Repository
 

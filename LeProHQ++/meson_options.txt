@@ -1,0 +1,6 @@
+# PDF support
+option('morfintungb', type : 'boolean', value : false, description : 'Build interface for MorfinTungB')
+option('cteq3',       type : 'boolean', value : false, description : 'Build interface for CTEQ3')
+option('grv',         type : 'boolean', value : false, description : 'Build interface for GRV94')
+option('grsv',        type : 'boolean', value : false, description : 'Build interface for GRSV96')
+option('dssv',        type : 'boolean', value : false, description : 'Build interface for DSSV14')

@@ -83,7 +83,7 @@ int testHadronic() {
     cuint nlf = 3;
     cdbl m2 = pow(1.5,2);
     const str unpolPDF = "gonly"; // "MSTW2008nlo90cl";
-    const str polPDF = "gonly"; // "DSSV2014";
+    const str polPDF = "gonly"; // "DSSV14";
     /*cuint nlf = 4;
     cdbl m2 = pow(4.75,2);
     const str unpolPDF = "gonly";
@@ -191,7 +191,7 @@ int testHadronicDiff() {
     oP.setProjection(gL);
     
     o2.setQ2(Q2);oL.setQ2(Q2);oP.setQ2(Q2);
-    o2.setPdf("MSTW2008nlo90cl",0);oL.setPdf("DSSV2014",0);oP.setPdf("DSSV2014",0);
+    o2.setPdf("MSTW2008nlo90cl",0);oL.setPdf("DSSV14",0);oP.setPdf("DSSV14",0);
     o2.setMu2(mu02);oL.setMu2(mu02);oP.setMu2(mu02);
     o2.setAlphaSByLHAPDF("MSTW2008nlo90cl",0);oL.setAlphaSByLHAPDF("MSTW2008nlo90cl",0);oP.setAlphaSByLHAPDF("MSTW2008nlo90cl",0);
     //cdbl lambdaQCD = .194;
@@ -328,7 +328,7 @@ int testHadronicInclusiveDiff() {
         printf("%e\t% e\t% e\n",ptSc,c2,e2);
     }*/
     
-    /*o2.setPdf("DSSV2014",5);
+    /*o2.setPdf("DSSV14",5);
     o2.setProjection(x2g1);
     o2.setMu2(mu02);
     cuint N = 5;
@@ -370,7 +370,7 @@ int testHadronicInclusiveDiff() {
         //o2.setProjection(FL);
         cdbl cL = 0.;//o2.dF_dHAQRapidity(y);
         cdbl eL = 0.;//o2.getIntegrationOutput().error;
-        //o2.setPdf("DSSV2014",0);
+        //o2.setPdf("DSSV14",0);
         //o2.setProjection(x2g1);
         cdbl cg = 0.;//o2.dF_dHAQRapidity(y);
         cdbl eg = 0.;//o2.getIntegrationOutput().error;
@@ -421,7 +421,7 @@ int testLeptonic() {
     InclusiveLeptoProduction og(nlf,m2,Delta);
     og.setPolarizeBeams(true);
     
-    oF.setPdf("MSTW2008nlo90cl",0);og.setPdf("DSSV2014",0);
+    oF.setPdf("MSTW2008nlo90cl",0);og.setPdf("DSSV14",0);
     oF.setMu2(mu02);og.setMu2(mu02);
     oF.setLambdaQCD(lambdaQCD);og.setLambdaQCD(lambdaQCD);
     

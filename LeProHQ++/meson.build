@@ -27,4 +27,4 @@ dvegas_dep = dependency('dvegas')
 
 subdir('include')
 subdir('src')
-subdir('tests')
+#subdir('tests')

@@ -15,9 +15,9 @@
  * - CTEQ3\cite Lai:1994bb implemented as *CTEQ3M*
  * - GRV94\cite Gluck:1994uf implemented as *GRV94LO* and *GRV94NLO*
  * - GRSV96\cite Gluck:1995yr for polarized PDFs implemented as *GRSV96STDLO* and *GRSV96STDNLO* [NB: patched version (name collision)]
- * - DSSV2014\cite PhysRevLett.113.012001 for polarized PDFs implemented as *DSSV2014* with support for all members [NB: patched version (member loading)]
+ * - DSSV14\cite PhysRevLett.113.012001 for polarized PDFs implemented as *DSSV14* with support for all members [NB: patched version (member loading)]
  * 
- * The location of the member file for DSSV2014 is read from the environment variable *DSSV2014_GRIDS*.
+ * The location of the member file for DSSV14 is read from the environment variable *DSSV14_GRIDS*.
  * 
  * The location of the files for GRSV96 is read from the environment variable *GRSV96_GRIDS*
  * 
@@ -28,7 +28,7 @@ class PdfWrapper {
 /**
  * @brief port to DSSV?
  */
-    bool isDSSV2014;
+    bool isDSSV14;
 
 /**
  * @brief port to CTEQ3?

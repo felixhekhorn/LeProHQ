@@ -3,14 +3,14 @@
 inc = include_directories('.')
 
 # add includes
-install_headers([
+install_headers(files([
     'Common/Color.hpp'
-], subdir: 'Common')
+]), subdir: 'Common')
 
-install_headers([
+install_headers(files([
     'FullyInclusive/PartonicVars.hpp'
-], subdir: 'FullyInclusive')
+]), subdir: 'FullyInclusive')
 
-install_headers([
+install_headers(files([
     'DynamicScaleFactors.hpp',
-])
+]))

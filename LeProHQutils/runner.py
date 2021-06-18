@@ -26,6 +26,7 @@ class AbstractRunner:
         computes all elements
         @param n_jobs number of parallel threads
         """
+        print("Computing %d points ..."%len(self.l))
         return Parallel(n_jobs=n_jobs,backend="threading")(delayed(self.callee)(e) for e in self.l)
 
 # thread worker

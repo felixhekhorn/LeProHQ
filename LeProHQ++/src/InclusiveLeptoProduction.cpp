@@ -6,22 +6,7 @@
 #include "gslpp/gslpp.Functor.hpp"
 
 #include "Common/Integration.hpp"
-
-#include <boost/python.hpp>
-
-class ScopedGILRelease
-{
-public:
-    inline ScopedGILRelease(){
-        m_thread_state = PyEval_SaveThread();
-    }
-    inline ~ScopedGILRelease(){
-        PyEval_RestoreThread(m_thread_state);
-        m_thread_state = NULL;
-    }
-private:
-    PyThreadState * m_thread_state;
-};
+#include "Common/PythonGIL.hpp"
 
 InclusiveLeptoProduction::InclusiveLeptoProduction(cuint nlf, cdbl m2, cdbl Delta) :
     AbstractFixedOrderLeptoProduction(new Inclusive::IntKer(), nlf, m2) {
@@ -81,7 +66,7 @@ Common::IntegrationConfig* InclusiveLeptoProduction::getIntegrationConfig(const 
 
 #define intND(N) cdbl InclusiveLeptoProduction::int##N##D() const {\
     this->ker->dim = N;\
-    ScopedGILRelease nogil;\
+    ScopedGILRelease gil;\
     return Common::integrate##N##D<Inclusive::IntKer>(kker,*this->intConfigs.at(N-1),this->intOut);\
 }
 intND(1)

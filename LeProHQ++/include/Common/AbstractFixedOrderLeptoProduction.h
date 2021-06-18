@@ -26,6 +26,9 @@ public:
  * @param m2 mass^2 of heavy flavours
  */
     AbstractFixedOrderLeptoProduction(AbstractIntKer* ker, cuint nlf, cdbl m2);
+
+/** @brief destructor */
+    virtual ~AbstractFixedOrderLeptoProduction(){};
     
 /** @name partonic coefficient functions */
 ///@{

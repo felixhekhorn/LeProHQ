@@ -4,6 +4,7 @@
 #include "config.h"
 #include "AbstractIntKer.h"
 #include "IntegrationMeta.hpp"
+//#include "PythonGIL.hpp"
 
 #include <vector>
 
@@ -65,7 +66,9 @@ protected:
     
 /** @brief current (last) IntegrationOutput */
     Common::IntegrationOutput* intOut;
-    
+
+    //ScopedGILRelease gil;
+
 public:
 
 /**
@@ -77,7 +80,7 @@ public:
     AbstractLeptoProduction(AbstractIntKer* ker, cuint nlf, cdbl m2);
     
 /** @brief destructor */
-    ~AbstractLeptoProduction();
+    virtual ~AbstractLeptoProduction();
     
 /** @name global getter and setter */
 ///@{

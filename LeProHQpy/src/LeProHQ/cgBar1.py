@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from .raw import cgBar1 as raw_cgBar1
-from .color import beta0_lf
 from .cg0 import cg0
+from .color import beta0_lf
+from .raw import cgBar1 as raw_cgBar1
 
 
 def cgBar1(proj, cc, xi, eta):

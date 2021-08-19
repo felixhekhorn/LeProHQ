@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+import numba as nb
 import numpy as np
 
-from .partonic_vars import PartonicVars
 from .cg0 import cg0t
 from .color import Kgph, Kqph
+from .partonic_vars import build_eta, build_xi
 from .utils import ln2, raw_c
 
 
+@nb.njit("UniTuple(f8,2)(string,string)", cache=True)
 def aq(proj, cc):
     """Quark NLO resummation coefficients"""
     a11 = 1.0
@@ -19,17 +21,19 @@ def aq(proj, cc):
     return a11, a10
 
 
+@nb.njit("f8(string,string, f8,f8)", cache=True)
 def cq1t(proj, cc, xi, eta):
     """Threshold limit of cq1"""
-    v = PartonicVars(xi, eta)
+    rho, beta, chi = build_eta(eta)
+    rho_q, _beta_q, _chi_q = build_xi(xi)
     a11, a10 = aq(proj, cc)
     return (
         cg0t(proj, cc, xi, eta)
-        * v.beta ** 2
+        * beta ** 2
         / np.pi ** 2
-        * (v.rho_q / (v.rho_q - 1.0))
+        * (rho_q / (rho_q - 1.0))
         * (Kqph / 6.0 / Kgph)
-        * (a11 * np.log(v.beta) + a10)
+        * (a11 * np.log(beta) + a10)
     )
 
 

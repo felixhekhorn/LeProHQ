@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from .partonic_vars import PartonicVars
+from .cg0 import cg0t
+from .color import CA, CF
+from .partonic_vars import build_eta
 from .raw import cg1_a10 as raw_cg1_a10
 from .utils import ln2, raw_c
-from .color import CF, CA
-from .cg0 import cg0t
 
 
 def ag(proj, cc, xi):
@@ -25,11 +25,11 @@ def ag(proj, cc, xi):
 
 def cg1t(proj, cc, xi, eta):
     """threshold limit of cg1"""
-    v = PartonicVars(xi, eta)
-    coulomb = np.pi ** 2 / (16.0 * v.beta) * (2.0 * CF - CA)
+    rho, beta, chi = build_eta(eta)
+    coulomb = np.pi ** 2 / (16.0 * beta) * (2.0 * CF - CA)
     a12, a11, a10_OK, a10_QED = ag(proj, cc, xi)
     res = (
-        CA * (a12 * np.log(v.beta) ** 2 + a11 * np.log(v.beta) + a10_OK)
+        CA * (a12 * np.log(beta) ** 2 + a11 * np.log(beta) + a10_OK)
         + 2.0 * CF * a10_QED
     )
     return cg0t(proj, cc, xi, eta) / np.pi ** 2 * (coulomb + res)

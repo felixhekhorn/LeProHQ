@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
+import numba as nb
 import numpy as np
 
-from .partonic_vars import PartonicVars
+from .partonic_vars import build_eta, build_xi
 from .raw import cg0 as raw_cg0
 
 
+@nb.njit("f8(string,string, f8,f8)", cache=True)
 def cg0t(proj, cc, xi, eta):
     """LO threshold limit"""
-    v = PartonicVars(xi, eta)
+    rho, beta, chi = build_eta(eta)
+    rho_q, _beta_q, _chi_q = build_xi(xi)
     if proj == "FL":
         if cc == "VV":
-            return (
-                4.0 * np.pi * v.beta ** 3 * v.rho_q ** 2 / (3.0 * (1.0 - v.rho_q) ** 3)
-            )
+            return 4.0 * np.pi * beta ** 3 * rho_q ** 2 / (3.0 * (1.0 - rho_q) ** 3)
         else:  # FL_AA
-            return np.pi * v.beta * v.rho_q ** 2 / (1.0 - v.rho_q)
+            return np.pi * beta * rho_q ** 2 / (1.0 - rho_q)
     if proj == "F2" and cc == "AA":  # F2_AA
-        return (
-            np.pi * v.beta * (1.0 - 2.0 * v.rho_q) * v.rho_q / (2.0 * (v.rho_q - 1.0))
-        )
-    return np.pi / 2.0 * v.rho_q / (v.rho_q - 1.0) * v.beta
+        return np.pi * beta * (1.0 - 2.0 * rho_q) * rho_q / (2.0 * (rho_q - 1.0))
+    return np.pi / 2.0 * rho_q / (rho_q - 1.0) * beta
 
 
 def cg0(proj, cc, xi, eta):

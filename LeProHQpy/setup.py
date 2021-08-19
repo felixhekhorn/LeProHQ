@@ -2,12 +2,12 @@
 import pathlib
 
 import packutil as pack
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 # write version on the fly - inspired by numpy
 MAJOR = 0
-MINOR = 1
-MICRO = 2
+MINOR = 2
+MICRO = 0
 
 repo_path = pathlib.Path(__file__).absolute().parent
 
@@ -53,6 +53,7 @@ def setup_package():
         ],
         install_requires=[
             "numpy",
+            "numba",
             "scipy",
         ],
         python_requires=">=3.7",

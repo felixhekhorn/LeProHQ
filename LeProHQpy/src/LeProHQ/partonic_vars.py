@@ -15,3 +15,4 @@ class PartonicVars:
         self.chi_q = (self.beta_q - 1.0) / (self.beta_q + 1.0)
         self.rho = 1.0 / (1.0 + eta)
         self.beta = np.sqrt(1.0 - self.rho)
+        self.chi = (1.0 - self.beta) / (1.0 + self.beta)

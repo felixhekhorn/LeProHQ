@@ -2,6 +2,7 @@
 (Un-)Polarized Lepto-Production of Heavy Quarks.
 
 [![thesis](https://img.shields.io/badge/DOI-%20%20%20%2010.15496%2Fpublikation--34811-blue)](https://inspirehep.net/literature/1757437)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5220831.svg)](https://doi.org/10.5281/zenodo.5220831)
 
 ## Citation Policy
 

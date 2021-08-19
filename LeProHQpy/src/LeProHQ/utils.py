@@ -186,14 +186,12 @@ def raw_c(proj, cc, xi, eta, path, cf, ct, high):
         return 0.0
     if path is None:
         path = datadir
-    elif isinstance(path, str):
-        path = pathlib.Path(path)
     # load grids
     grid_tp, a_int = load_1d_interpolation(
-        path / f"{cf}" / f"{cf}-{proj}_{cc}-thres-coeff.dat"
+        str(path) + f"/{cf}/{cf}-{proj}_{cc}-thres-coeff.dat"
     )
     grid_bulk, bulk_int = load_2d_interpolation(
-        path / f"{cf}" / f"{cf}-{proj}_{cc}-bulk.dat"
+        str(path) + f"/{cf}/{cf}-{proj}_{cc}-bulk.dat"
     )
     low = grid_bulk[1, 0]
     lneta = np.log(eta)

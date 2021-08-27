@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+import abc
 
 import matplotlib.pyplot as plt
 import numpy as np
-import yaml
-
 import runner
+import yaml
 from LeProHQpp import Projection as proj
 
 # global parameters
@@ -19,93 +19,57 @@ intCfg = {"verbosity": 1}
 default_flags = {"usePhoton": True, "usePhotonZ": False, "useZ": False}
 flags = {  # split by different contributions
     "LO": {"useLeadingOrder": True, "useNextToLeadingOrder": False},  # LO result
-    #    "NLO": {"useLeadingOrder": True , "useNextToLeadingOrder": True}, # NLO result
+    # "NLO": {"useLeadingOrder": True , "useNextToLeadingOrder": True}, # NLO result
 }
-
-
-projs = [proj.F2, proj.FL]
 
 # rapidity configuration
 n_rap_bins = 20
-
-# 	mu2 = (4.,1.,4.,0.,)
+# pt configuration
+n_pt_bins = 20
+mu2_pt = (
+    4.0,
+    1.0,
+    4.0,
+    0.0,
+)
 
 objArgs = (nlf, m2, Delta)
 
 
-class RapidityRunner:
+class AbstractRunner(abc.ABC):
     """
-    Generate the rapidity plots.
+    Generate the plots.
 
     Parameters
     ----------
         n_bins : int
-            number of rapidity bins
+            number of bins
     """
 
-    setups = (
-        dict(num=11, proj_=proj.F2, x=0.1, y0=2.0, yrange=(1e-6, 1e-2)),
-        dict(num=12, proj_=proj.F2, x=0.01, y0=3.5, yrange=(1e-5, 1e-1)),
-        dict(num=13, proj_=proj.F2, x=0.001, y0=4.5, yrange=(1e-5, 1e-1)),
-        dict(num=14, proj_=proj.F2, x=0.0001, y0=5.5, yrange=(1e-5, 1e-1)),
-        dict(num=16, proj_=proj.FL, x=0.1, y0=2.0, yrange=(1e-7, 1e-3)),
-        dict(num=17, proj_=proj.FL, x=0.01, y0=3.0, yrange=(1e-6, 1e-2)),
-        dict(num=18, proj_=proj.FL, x=0.001, y0=4.5, yrange=(1e-6, 1e-2)),
-        dict(num=19, proj_=proj.FL, x=0.0001, y0=5.5, yrange=(1e-5, 1e-1)),
-    )
-    """list of configurations for each figure"""
-
-    def __init__(self, n_bins):
+    def __init__(self):
         self.r = runner.InclusiveRunner()
         self.m = None
-        self.bins = np.linspace(-1.0, 1.0, n_bins)
 
+    def append_all(self):
+        """Add all curves with all configurations"""
+        for k, cfg in enumerate(self.setups):
+            for l, flag_label in enumerate(flags.keys()):
+                self.append(cfg, flag_label, (k, l))
+
+    @abc.abstractmethod
     def append(self, cfg, flag_label, tag):
         """
         Add a single curve
 
         Parameters
         ----------
-            proj_ : LeProHQpp.Projection
-                projection
-            xBj : float
-                Bjorken x
-            y0 : float
-                rapidity range
+            cfg : dict
+                configuration
             flag_label : str
                 flags identifier
             tag : tuple
                 config identifier
         """
-        xBj = cfg["x"]
-        y0 = cfg["y0"]
-        for bin_, y in enumerate(y0 * self.bins):
-            cur_flags = default_flags.copy()
-            cur_flags.update(flags[flag_label])
-            self.r.append(
-                {
-                    "objArgs": objArgs,
-                    "projection": cfg["proj_"],
-                    "Q2": Q2,
-                    "xBjorken": xBj,
-                    "lambdaQCD": lambdaQCD,
-                    "pdf": pdf,
-                    "IntegrationConfig": intCfg,
-                    "run": ("dF_dHAQRapidity", y),
-                    "flags": cur_flags,
-                    "bin": bin_,
-                    "tag": tag,
-                    "msg": f"x={xBj}, Q2={Q2}, y={y}",
-                    "IntegrationOutput": True,
-                }
-            )
-
-    def append_all(self):
-        """Add all curves with all configurations"""
-        for j, _p in enumerate(projs):
-            for k, cfg in enumerate(self.setups):
-                for l, flag_label in enumerate(flags.keys()):
-                    self.append(cfg, flag_label, (j, k, l))
 
     def run(self, n_jobs=None):
         """
@@ -134,9 +98,7 @@ class RapidityRunner:
             m : np.ndarray
                 nested data accoring to tag and bin
         """
-        m_raw = np.full(
-            (len(projs), len(self.setups), len(flags), len(self.bins)), np.nan
-        )
+        m_raw = np.full((len(self.setups), len(flags), len(self.bins)), np.nan)
         m = {"res": m_raw.copy(), "error": m_raw.copy()}
         for e in l:
             m["res"][(*e["tag"], e["bin"])] = e["res"]
@@ -152,6 +114,7 @@ class RapidityRunner:
             fn : str
                 file name
         """
+        print(f"[INFO] Dumping to {fn} ...")
         s = []
         for e in self.setups:
             d = e.copy()
@@ -159,8 +122,7 @@ class RapidityRunner:
             d["yrange"] = list(e["yrange"])
             s.append(d)
         out = {
-            "sorting": ["projections", "setups", "flags", "bins"],
-            "projections": [str(p) for p in projs],
+            "sorting": ["setups", "flags", "bins"],
             "setups": s,
             "flags": [f for f in flags],
             "bins": self.bins.tolist(),
@@ -179,11 +141,11 @@ class RapidityRunner:
             fn : str
                 file name
         """
+        print(f"[INFO] Loading {fn} ...")
         with open(fn, "r") as o:
             mm = yaml.safe_load(o)
         self.m = {}
         shape = (
-            len(mm["projections"]),
             len(mm["setups"]),
             len(mm["flags"]),
             len(mm["bins"]),
@@ -191,7 +153,58 @@ class RapidityRunner:
         self.m["res"] = np.frombuffer(mm["res"]).reshape(shape)
         self.m["error"] = np.frombuffer(mm["error"]).reshape(shape)
 
-    def plot(self, fp, show=False):
+
+class RapidityRunner(AbstractRunner):
+    """
+    Generate the rapidity plots.
+
+    Parameters
+    ----------
+        n_bins : int
+            number of bins
+    """
+
+    setups = (
+        dict(num=11, proj_=proj.F2, x=0.1, y0=2.0, yrange=(1e-6, 1e-2)),
+        dict(num=12, proj_=proj.F2, x=0.01, y0=3.5, yrange=(1e-5, 1e-1)),
+        dict(num=13, proj_=proj.F2, x=0.001, y0=4.5, yrange=(1e-5, 1e-1)),
+        dict(num=14, proj_=proj.F2, x=0.0001, y0=5.5, yrange=(1e-5, 1e-1)),
+        dict(num=16, proj_=proj.FL, x=0.1, y0=2.0, yrange=(1e-7, 1e-3)),
+        dict(num=17, proj_=proj.FL, x=0.01, y0=3.0, yrange=(1e-6, 1e-2)),
+        dict(num=18, proj_=proj.FL, x=0.001, y0=4.5, yrange=(1e-6, 1e-2)),
+        dict(num=19, proj_=proj.FL, x=0.0001, y0=5.5, yrange=(1e-5, 1e-1)),
+    )
+    """list of configurations for each figure"""
+
+    def __init__(self, n_bins):
+        super().__init__()
+        self.bins = np.linspace(-1.0, 1.0, n_bins)
+
+    def append(self, cfg, flag_label, tag):
+        xBj = cfg["x"]
+        y0 = cfg["y0"]
+        for bin_, y in enumerate(y0 * self.bins):
+            cur_flags = default_flags.copy()
+            cur_flags.update(flags[flag_label])
+            self.r.append(
+                {
+                    "objArgs": objArgs,
+                    "projection": cfg["proj_"],
+                    "Q2": Q2,
+                    "xBjorken": xBj,
+                    "lambdaQCD": lambdaQCD,
+                    "pdf": pdf,
+                    "IntegrationConfig": intCfg,
+                    "run": ("dF_dHAQRapidity", y),
+                    "flags": cur_flags,
+                    "bin": bin_,
+                    "tag": tag,
+                    "msg": f"x={xBj}, Q2={Q2}, y={y}",
+                    "IntegrationOutput": True,
+                }
+            )
+
+    def plot(self, fp="fig%d.pdf", show=False):
         """
         Draw all plots
 
@@ -202,6 +215,7 @@ class RapidityRunner:
             show : bool
                 show plot on screen?
         """
+        print("[INFO] Plotting ...")
         for k, cfg in enumerate(self.setups):
             fn = fp % cfg["num"]
             fig = plt.figure()
@@ -213,13 +227,13 @@ class RapidityRunner:
             # y_paper = -y_me
             ax.semilogy(
                 -self.bins * cfg["y0"],
-                self.m["res"][projs.index(cfg["proj_"]), k, 0],
+                self.m["res"][k, 0],
                 label="LO",
             )
             if "NLO" in flags:
                 ax.semilogy(
                     -self.bins * cfg["y0"],
-                    self.m["res"][projs.index(cfg["proj_"]), k, 1],
+                    self.m["res"][k, 1],
                     label="NLO",
                 )
             ax.set_ylim(cfg["yrange"])
@@ -232,8 +246,106 @@ class RapidityRunner:
             plt.close(fig)
 
 
-rr = RapidityRunner(n_rap_bins)
+class TransverseMomentumRunner(AbstractRunner):
+    """
+    Generate the transverse momentum plots.
+
+    Parameters
+    ----------
+        n_bins : int
+            number of bins
+    """
+
+    setups = (
+        dict(num=1, proj_=proj.F2, x=0.1, ptmax=5.0, yrange=(1e-5, 1e-2)),
+        dict(num=2, proj_=proj.F2, x=0.01, ptmax=8.0, yrange=(1e-4, 1e-1)),
+        dict(num=3, proj_=proj.F2, x=0.001, ptmax=15.0, yrange=(1e-4, 1e-1)),
+        dict(num=4, proj_=proj.F2, x=0.0001, ptmax=20.0, yrange=(1e-4, 1e-1)),
+        dict(num=6, proj_=proj.FL, x=0.1, ptmax=5.0, yrange=(1e-6, 1e-3)),
+        dict(num=7, proj_=proj.FL, x=0.01, ptmax=10.0, yrange=(1e-5, 1e-2)),
+        dict(num=8, proj_=proj.FL, x=0.001, ptmax=15.0, yrange=(1e-5, 1e-2)),
+        dict(num=9, proj_=proj.FL, x=0.0001, ptmax=20.0, yrange=(1e-5, 1e-2)),
+    )
+    """list of configurations for each figure"""
+
+    def __init__(self, n_bins):
+        super().__init__()
+        self.bins = np.linspace(0.0, 1.0, n_bins)
+
+    def append(self, cfg, flag_label, tag):
+        xBj = cfg["x"]
+        ptmax = cfg["ptmax"]
+        for bin_, pt in enumerate(ptmax * self.bins):
+            cur_flags = default_flags.copy()
+            cur_flags.update(flags[flag_label])
+            self.r.append(
+                {
+                    "objArgs": objArgs,
+                    "projection": cfg["proj_"],
+                    "Q2": Q2,
+                    "xBjorken": xBj,
+                    "lambdaQCD": lambdaQCD,
+                    "pdf": pdf,
+                    "IntegrationConfig": intCfg,
+                    "run": ("dF_dHAQTransverseMomentum", pt),
+                    "flags": cur_flags,
+                    "bin": bin_,
+                    "mu2": mu2_pt,
+                    "tag": tag,
+                    "msg": f"x={xBj}, Q2={Q2}, pt={pt}",
+                    "IntegrationOutput": True,
+                }
+            )
+
+    def plot(self, fp="fig%d.pdf", show=False):
+        """
+        Draw all plots
+
+        Parameters
+        ----------
+            fp : str
+                template file name
+            show : bool
+                show plot on screen?
+        """
+        print("[INFO] Plotting ...")
+        for k, cfg in enumerate(self.setups):
+            fn = fp % cfg["num"]
+            fig = plt.figure()
+            fig.suptitle(f"x = {cfg['x']:g}")
+            ax = fig.add_subplot(111)
+            ax.set_xlabel("$p_t$ (GeV/c)")
+            kind = "2" if cfg["proj_"] == proj.F2 else "L"
+            ax.set_ylabel(f"$dF_{kind}(x,Q^2,m_c^2,p_t)/dp_t$")
+            ax.semilogy(
+                self.bins * cfg["ptmax"],
+                self.m["res"][k, 0],
+                label="LO",
+            )
+            if "NLO" in flags:
+                ax.semilogy(
+                    self.bins * cfg["ptmax"],
+                    self.m["res"][k, 1],
+                    label="NLO",
+                )
+            ax.set_ylim(cfg["yrange"])
+            ax.set_xlim([0, cfg["ptmax"]])
+            ax.tick_params(bottom=True, top=True, left=True, right=True, which="both")
+            fig.legend()
+            fig.savefig(fn)
+            if show:
+                plt.show()
+            plt.close(fig)
+
+
+# rr = RapidityRunner(n_rap_bins)
 # rr.run(-2)
-# rr.dump("rap-lo.yaml")
-rr.load("rap-lo.yaml")
-rr.plot("fig%d.pdf")
+# # rr.dump("rap-lo.yaml")
+# # rr.load("rap-lo.yaml")
+# rr.plot()
+
+pr = TransverseMomentumRunner(n_pt_bins)
+pr.run(-2)
+# pr.dump("pt.yaml")
+# pr.load("pt-lo.yaml")
+pr.plot()

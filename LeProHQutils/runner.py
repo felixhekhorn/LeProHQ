@@ -28,7 +28,6 @@ class AbstractRunner:
         print("Computing %d points ..."%len(self.l))
         return Parallel(n_jobs=n_jobs,backend="threading")(delayed(self.callee)(e) for e in self.l)
 
-# thread worker
 def global_setter(o,p):
     """set global vars"""
     if "run" not in p:
@@ -79,16 +78,15 @@ def global_run(o,p):
             p["res"] = getattr(o,run)()
 
 def global_post_run(o,p):
-    """cleanup"""
-    # post run
+    """post run stuff"""
     if "IntegrationOutput" in p:
         p["IntegrationOutput"] = o.getIntegrationOutput()
     if "msg" in p: print(p["msg"])
 
 
-# build instances for Inclusive
+# thread worker for Inclusive
 def run_inclusive(p):
-    """working method"""
+    """inclusive working method"""
     # setup
     o = InclusiveLeptoProduction(*p["objArgs"])
 
@@ -112,43 +110,34 @@ def run_inclusive(p):
     return p
 
 class InclusiveRunner(AbstractRunner):
-    """wrapper for FullyDiffLeptoProduction to run several jobs in parallel"""
+    """wrapper for InclusiveLeptoProduction to run several jobs in parallel"""
     def __init__(self):
         """constructor"""
         super().__init__(run_inclusive)
 
-# # build instances for FullyDiff
-# class FullyDiffConsumer(AbstractConsumer):
-#     """a single, working process"""
+def run_fully_diff(p):
+    """fully differential working method"""
+    # setup
+    o = FullyDiffLeptoProduction(*p["objArgs"])
 
-#     def run(self):
-#         """working method"""
-#         while True:
-#             # get
-#             p = self.qIn.get()
-#             if None == p: # EOF?
-#                 self.qIn.task_done()
-#                 break
-#             # setup
-#             o = FullyDiffLeptoProduction(*p["objArgs"])
+    # setters
+    global_setter(o,p)
+    if "xTilde" in p: o.setXTilde(p["xTilde"])
+    if "omega" in p: o.setOmega(p["omega"])
+    if "deltax" in p: o.setDeltax(p["deltax"])
+    if "deltay" in p: o.setDeltay(p["deltay"])
 
-#             self._globalSetter(o,p)
-            
-#             if "xTilde" in p: o.setXTilde(p["xTilde"])
-#             if "omega" in p: o.setOmega(p["omega"])
-#             if "deltax" in p: o.setDeltax(p["deltax"])
-#             if "deltay" in p: o.setDeltay(p["deltay"])
+    if "activateHistograms" in p:
+        for k in p["activateHistograms"]:
+            o.activateHistogram(*k)
+    # run
+    global_run(o,p)
+    # post process
+    global_post_run(o,p)
+    return p
 
-#             if "activateHistograms" in p:
-#                 for k in p["activateHistograms"]:
-#                     o.activateHistogram(*k)
-#             # run
-#             self._globalRun(o,p)
-#             # post process
-#             self._globalPostRun(o,p)
-
-# class FullyDiffRunner(AbstractRunner):
-#     """wrapper for FullyDiffLeptoProduction to run several jobs in parallel"""
-#     def __init__(self):
-#         """constructor"""
-#         super().__init__(FullyDiffConsumer)
+class FullyDiffRunner(AbstractRunner):
+    """wrapper for FullyDiffLeptoProduction to run several jobs in parallel"""
+    def __init__(self):
+        """constructor"""
+        super().__init__(run_fully_diff)

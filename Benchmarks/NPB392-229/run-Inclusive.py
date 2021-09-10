@@ -1,11 +1,14 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import abc
+import pathlib
 
 import matplotlib.pyplot as plt
 import numpy as np
 import runner
+import plots
 import yaml
+
 from LeProHQpp import Projection as proj
 
 # global parameters
@@ -34,6 +37,8 @@ mu2_pt = (
 )
 
 objArgs = (nlf, m2, Delta)
+
+dir = pathlib.Path(__file__).parent / "Inclusive"
 
 
 class AbstractRunner(abc.ABC):
@@ -164,17 +169,7 @@ class RapidityRunner(AbstractRunner):
             number of bins
     """
 
-    setups = (
-        dict(num=11, proj_=proj.F2, x=0.1, y0=2.0, yrange=(1e-6, 1e-2)),
-        dict(num=12, proj_=proj.F2, x=0.01, y0=3.5, yrange=(1e-5, 1e-1)),
-        dict(num=13, proj_=proj.F2, x=0.001, y0=4.5, yrange=(1e-5, 1e-1)),
-        dict(num=14, proj_=proj.F2, x=0.0001, y0=5.5, yrange=(1e-5, 1e-1)),
-        dict(num=16, proj_=proj.FL, x=0.1, y0=2.0, yrange=(1e-7, 1e-3)),
-        dict(num=17, proj_=proj.FL, x=0.01, y0=3.0, yrange=(1e-6, 1e-2)),
-        dict(num=18, proj_=proj.FL, x=0.001, y0=4.5, yrange=(1e-6, 1e-2)),
-        dict(num=19, proj_=proj.FL, x=0.0001, y0=5.5, yrange=(1e-5, 1e-1)),
-    )
-    """list of configurations for each figure"""
+    setups = plots.y
 
     def __init__(self, n_bins):
         super().__init__()
@@ -204,7 +199,7 @@ class RapidityRunner(AbstractRunner):
                 }
             )
 
-    def plot(self, fp="fig%d.pdf", show=False):
+    def plot(self, fp, show=False):
         """
         Draw all plots
 
@@ -217,7 +212,7 @@ class RapidityRunner(AbstractRunner):
         """
         print("[INFO] Plotting ...")
         for k, cfg in enumerate(self.setups):
-            fn = fp % cfg["num"]
+            fn = str(fp) % cfg["num"]
             fig = plt.figure()
             fig.suptitle(f"x = {cfg['x']:g}")
             ax = fig.add_subplot(111)
@@ -256,17 +251,7 @@ class TransverseMomentumRunner(AbstractRunner):
             number of bins
     """
 
-    setups = (
-        dict(num=1, proj_=proj.F2, x=0.1, ptmax=5.0, yrange=(1e-5, 1e-2)),
-        dict(num=2, proj_=proj.F2, x=0.01, ptmax=8.0, yrange=(1e-4, 1e-1)),
-        dict(num=3, proj_=proj.F2, x=0.001, ptmax=15.0, yrange=(1e-4, 1e-1)),
-        dict(num=4, proj_=proj.F2, x=0.0001, ptmax=20.0, yrange=(1e-4, 1e-1)),
-        dict(num=6, proj_=proj.FL, x=0.1, ptmax=5.0, yrange=(1e-6, 1e-3)),
-        dict(num=7, proj_=proj.FL, x=0.01, ptmax=10.0, yrange=(1e-5, 1e-2)),
-        dict(num=8, proj_=proj.FL, x=0.001, ptmax=15.0, yrange=(1e-5, 1e-2)),
-        dict(num=9, proj_=proj.FL, x=0.0001, ptmax=20.0, yrange=(1e-5, 1e-2)),
-    )
-    """list of configurations for each figure"""
+    setups = plots.pt
 
     def __init__(self, n_bins):
         super().__init__()
@@ -297,7 +282,7 @@ class TransverseMomentumRunner(AbstractRunner):
                 }
             )
 
-    def plot(self, fp="fig%d.pdf", show=False):
+    def plot(self, fp, show=False):
         """
         Draw all plots
 
@@ -310,7 +295,7 @@ class TransverseMomentumRunner(AbstractRunner):
         """
         print("[INFO] Plotting ...")
         for k, cfg in enumerate(self.setups):
-            fn = fp % cfg["num"]
+            fn = str(fp) % cfg["num"]
             fig = plt.figure()
             fig.suptitle(f"x = {cfg['x']:g}")
             ax = fig.add_subplot(111)
@@ -338,14 +323,14 @@ class TransverseMomentumRunner(AbstractRunner):
             plt.close(fig)
 
 
-# rr = RapidityRunner(n_rap_bins)
-# rr.run(-2)
-# # rr.dump("rap-lo.yaml")
-# # rr.load("rap-lo.yaml")
-# rr.plot()
+# yr = RapidityRunner(n_rap_bins)
+# yr.run(-2)
+# yr.dump(dir / "rap-lo.yaml")
+# yr.load(dir / "rap-lo.yaml")
+# yr.plot(dir / "fig%d.pdf")
 
-pr = TransverseMomentumRunner(n_pt_bins)
-pr.run(-2)
-# pr.dump("pt.yaml")
-# pr.load("pt-lo.yaml")
-pr.plot()
+ptr = TransverseMomentumRunner(n_pt_bins)
+ptr.run(-2)
+# ptr.dump(dir / "pt.yaml")
+# ptr.load(dir / "pt-lo.yaml")
+ptr.plot(dir / "fig%d.pdf")

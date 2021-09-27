@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import re
+
 from joblib import Parallel, delayed
 
-from LeProHQpp import (
-    InclusiveLeptoProduction,
-    FullyDiffLeptoProduction,
-    DynamicScaleFactors,
-)
+from LeProHQpp import (DynamicScaleFactors, FullyDiffLeptoProduction,
+                       InclusiveLeptoProduction)
+
 
 # provide runner
 class AbstractRunner:

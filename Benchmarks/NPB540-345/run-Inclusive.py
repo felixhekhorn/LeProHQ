@@ -5,11 +5,10 @@ import pathlib
 
 import matplotlib.pyplot as plt
 import numpy as np
-import runner
 import yaml
 
 import config
-
+import runner
 from LeProHQpp import Projection as proj
 
 # global parameters

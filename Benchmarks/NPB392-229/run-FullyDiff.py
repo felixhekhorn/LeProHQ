@@ -5,11 +5,12 @@ import pathlib
 
 import matplotlib.pyplot as plt
 import numpy as np
-import runner
-import plots
 import yaml
 
-from LeProHQpp import Projection as proj, FullyDiffHistT
+import plots
+import runner
+from LeProHQpp import FullyDiffHistT
+from LeProHQpp import Projection as proj
 
 # global parameters
 nlf = 3

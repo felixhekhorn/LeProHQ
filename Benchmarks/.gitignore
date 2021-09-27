@@ -1,3 +1,6 @@
+# don't upload references and generated plots
+*.pdf
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

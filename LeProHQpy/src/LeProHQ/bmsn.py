@@ -5,11 +5,7 @@
 import numba as nb
 import numpy as np
 
-ca = 3.
-cf = 4./3.
-tr = 0.5
-
-
+from .color import CA as ca, CF as cf, TR as tr
 from .nielsen import nielsen
 from .zeta import zeta2, zeta3
 

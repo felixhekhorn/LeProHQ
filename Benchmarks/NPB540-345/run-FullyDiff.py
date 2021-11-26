@@ -68,10 +68,23 @@ class AbstractRunner(abc.ABC):
         Parameters
         ----------
             n_jobs : int
-                number ofjobs
+                number of jobs
         """
         self.append_all()
         l = self.r.run(n_jobs)
+
+    def search(self, fnc):
+        vals = list(
+            filter(
+                fnc,
+                self.setups,
+            )
+        )
+        idc = []
+        for v in vals:
+            idx = self.setups.index(v)
+            idc.append(idx)
+        return idc
 
 
 class Fig10Runner(AbstractRunner):
@@ -120,19 +133,6 @@ class Fig10Runner(AbstractRunner):
                 "IntegrationOutput": True,
             }
         )
-
-    def search(self, fnc):
-        vals = list(
-            filter(
-                fnc,
-                self.setups,
-            )
-        )
-        idc = []
-        for v in vals:
-            idx = self.setups.index(v)
-            idc.append(idx)
-        return idc
 
     def plot(self, dir, fp, show=False):
         """
@@ -275,6 +275,78 @@ class Fig10Runner(AbstractRunner):
         if show:
             plt.show()
         plt.close(fig)
+
+
+
+class Fig11Runner(AbstractRunner):
+    """
+    Generate Figure 11.
+
+    Parameters
+    ----------
+        path : str
+            histogram path
+        n_bins : int
+            number of bins
+    """
+
+    def __init__(self, path, n_bins):
+        super().__init__(path, config.setup_fig10)
+        self.n_bins = n_bins
+
+    def append(self, cfg, tag):
+        cur_flags = config.default_flags.copy()
+        cur_flags.update(config.flags[cfg["orderFlag"]])
+        self.r.append(
+            {
+                "objArgs": objArgs,
+                "projection": cfg["proj_"],
+                "Q2": config.Q2,
+                "hadronicS": 10.**2,
+                "lambdaQCD": config.lambdaQCD,
+                "pdf": (cfg["pdf"], 0),
+                "IntegrationConfig": config.intCfg,
+                "run": "F",
+                "activateHistograms": [
+                    (
+                        FullyDiffHistT.HAQRapidity,
+                        self.n_bins,
+                        str(self.path) % (11, tag, "y"),
+                        # 1e-3,
+                        # 1,
+                    )
+                ],
+                "mu2": (2., 0., 0., 0.),
+                "flags": cur_flags,
+                "tag": tag,
+                "msg": f"S_h = {cfg['hadronicS']}, muf2 = {cfg['cMuF2']}, mur2 = {cfg['cMuR2']}",
+                "IntegrationOutput": True,
+            }
+        )
+
+    def plot(self, dir, fp, show=False):
+        """
+        Draw figure.
+
+        Parameters
+        ----------
+            fp : str
+                template file name
+            show : bool
+                show plot on screen?
+        """
+        print("[INFO] Plotting ...")
+        # fig = plt.figure()
+        # fig.suptitle(f"Figure 10")
+        # ax = fig.add_subplot(111)
+        # ax.set_xlabel("$x_T$")
+        # ax.set_ylabel(r"$d\Delta\sigma_{\gamma p}^c/dx_T$ [nb]")
+        # ax.set_xscale("log")
+        # fig.legend()
+        # fig.savefig(fp)
+        # if show:
+        #     plt.show()
+        # plt.close(fig)
 
 
 datadir = dir / "fig%d-%d-%s.dat"

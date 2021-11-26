@@ -63,7 +63,7 @@ class AbstractRunner(abc.ABC):
         Parameters
         ----------
             n_jobs : int
-                number ofjobs
+                number of jobs
         """
         self.append_all()
         l = self.r.run(n_jobs)

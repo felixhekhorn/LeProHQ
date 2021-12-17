@@ -277,7 +277,6 @@ class Fig10Runner(AbstractRunner):
         plt.close(fig)
 
 
-
 class Fig11Runner(AbstractRunner):
     """
     Generate Figure 11.
@@ -302,7 +301,7 @@ class Fig11Runner(AbstractRunner):
                 "objArgs": objArgs,
                 "projection": cfg["proj_"],
                 "Q2": config.Q2,
-                "hadronicS": 10.**2,
+                "hadronicS": 10.0 ** 2,
                 "lambdaQCD": config.lambdaQCD,
                 "pdf": (cfg["pdf"], 0),
                 "IntegrationConfig": config.intCfg,
@@ -316,7 +315,7 @@ class Fig11Runner(AbstractRunner):
                         # 1,
                     )
                 ],
-                "mu2": (2., 0., 0., 0.),
+                "mu2": (2.0, 0.0, 0.0, 0.0),
                 "flags": cur_flags,
                 "tag": tag,
                 "msg": f"S_h = {cfg['hadronicS']}, muf2 = {cfg['cMuF2']}, mur2 = {cfg['cMuR2']}",

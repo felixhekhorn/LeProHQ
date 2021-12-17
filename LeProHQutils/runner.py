@@ -4,8 +4,11 @@ import re
 
 from joblib import Parallel, delayed
 
-from LeProHQpp import (DynamicScaleFactors, FullyDiffLeptoProduction,
-                       InclusiveLeptoProduction)
+from LeProHQpp import (
+    DynamicScaleFactors,
+    FullyDiffLeptoProduction,
+    InclusiveLeptoProduction,
+)
 
 
 # provide runner

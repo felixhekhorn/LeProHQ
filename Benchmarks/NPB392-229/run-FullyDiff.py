@@ -15,8 +15,8 @@ from LeProHQpp import Projection as proj
 # global parameters
 nlf = 3
 m2 = 1.5 ** 2
-xTilde = .8
-omega = 1.
+xTilde = 0.8
+omega = 1.0
 deltax = 1e-6
 deltay = 7e-6
 Q2 = 10
@@ -40,7 +40,7 @@ mu2_pt = (
     0.0,
 )
 
-objArgs = (nlf, m2, xTilde,omega,deltax,deltay)
+objArgs = (nlf, m2, xTilde, omega, deltax, deltay)
 
 dir = pathlib.Path(__file__).parent / "FullyDiff"
 
@@ -127,7 +127,15 @@ class RapidityRunner(AbstractRunner):
                 "pdf": pdf,
                 "IntegrationConfig": intCfg,
                 "run": "F",
-                "activateHistograms": [(FullyDiffHistT.HAQRapidity, self.n_bins, str(self.path)%(cfg["num"],flag_label), -y0, y0)],
+                "activateHistograms": [
+                    (
+                        FullyDiffHistT.HAQRapidity,
+                        self.n_bins,
+                        str(self.path) % (cfg["num"], flag_label),
+                        -y0,
+                        y0,
+                    )
+                ],
                 "flags": cur_flags,
                 "tag": tag,
                 "msg": f"x={xBj}, Q2={Q2}, y, {flag_label}",
@@ -155,14 +163,14 @@ class RapidityRunner(AbstractRunner):
             ax.set_xlabel("y (rapidity)")
             kind = "2" if cfg["proj_"] == proj.F2 else "L"
             ax.set_ylabel(f"$dF_{kind}(x,Q^2,m_c^2,y)/dy$")
-            ax.set_yscale('log')
+            ax.set_yscale("log")
             for flag_label in flags:
-                data = np.loadtxt(str(dir) % (cfg["num"],flag_label))
+                data = np.loadtxt(str(dir) % (cfg["num"], flag_label))
                 # y_paper = -y_me
                 ax.bar(
-                    -data[:,0],
-                    data[:,2]/(data[:,1] - data[:,0]),
-                    -(data[:,1] - data[:,0]),
+                    -data[:, 0],
+                    data[:, 2] / (data[:, 1] - data[:, 0]),
+                    -(data[:, 1] - data[:, 0]),
                     align="edge",
                     label=flag_label,
                 )
@@ -210,7 +218,15 @@ class TransverseMomentumRunner(AbstractRunner):
                 "pdf": pdf,
                 "IntegrationConfig": intCfg,
                 "run": "F",
-                "activateHistograms": [(FullyDiffHistT.HAQTransverseMomentum, self.n_bins, str(self.path)%(cfg["num"],flag_label), 0, ptmax)],
+                "activateHistograms": [
+                    (
+                        FullyDiffHistT.HAQTransverseMomentum,
+                        self.n_bins,
+                        str(self.path) % (cfg["num"], flag_label),
+                        0,
+                        ptmax,
+                    )
+                ],
                 "flags": cur_flags,
                 "mu2": mu2_pt,
                 "msg": f"x={xBj}, Q2={Q2}, pt, {flag_label}",
@@ -238,13 +254,13 @@ class TransverseMomentumRunner(AbstractRunner):
             ax.set_xlabel("$p_t$ (GeV/c)")
             kind = "2" if cfg["proj_"] == proj.F2 else "L"
             ax.set_ylabel(f"$dF_{kind}(x,Q^2,m_c^2,p_t)/dp_t$")
-            ax.set_yscale('log')
+            ax.set_yscale("log")
             for flag_label in flags:
-                data = np.loadtxt(str(dir) % (cfg["num"],flag_label))
+                data = np.loadtxt(str(dir) % (cfg["num"], flag_label))
                 ax.bar(
-                    data[:,0],
-                    data[:,2]/(data[:,1] - data[:,0]),
-                    (data[:,1] - data[:,0]),
+                    data[:, 0],
+                    data[:, 2] / (data[:, 1] - data[:, 0]),
+                    (data[:, 1] - data[:, 0]),
                     align="edge",
                     label=flag_label,
                 )
@@ -256,6 +272,7 @@ class TransverseMomentumRunner(AbstractRunner):
             if show:
                 plt.show()
             plt.close(fig)
+
 
 datadir = dir / "fig%d-%s.dat"
 # yr = RapidityRunner(datadir, n_rap_bins)

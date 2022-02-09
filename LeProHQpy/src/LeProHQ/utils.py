@@ -187,9 +187,9 @@ def raw_c(proj, cc, xi, eta, path, cf, ct, high):
     if path is None:
         path = datadir
     # load grids
-    grid_tp, a_int = load_1d_interpolation(
-        str(path) + f"/{cf}/{cf}-{proj}_{cc}-thres-coeff.dat"
-    )
+    #grid_tp, a_int = load_1d_interpolation(
+    #    str(path) + f"/{cf}/{cf}-{proj}_{cc}-thres-coeff.dat"
+    #)
     grid_bulk, bulk_int = load_2d_interpolation(
         str(path) + f"/{cf}/{cf}-{proj}_{cc}-bulk.dat"
     )
@@ -197,11 +197,13 @@ def raw_c(proj, cc, xi, eta, path, cf, ct, high):
     lneta = np.log(eta)
     # threshold only?
     if lneta < low:
-        return raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
+        return ct(proj, cc, xi, eta)
+        #return raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
     # bulk only?
     if lneta >= high:
         return raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int)
     # otherwise apply linear interpolation between the two
-    tp = raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
+    #tp = raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
+    tp = ct(proj, cc, xi, eta)
     b = raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int)
     return (tp * (lneta - high) + b * (low - lneta)) / (low - high)

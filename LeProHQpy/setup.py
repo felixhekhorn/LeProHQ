@@ -11,6 +11,8 @@ MICRO = 2
 
 repo_path = pathlib.Path(__file__).absolute().parent
 
+# pip wheel . -w dist --no-deps --use-feature=in-tree-build
+# twine upload dist/*
 
 def setup_package():
     # write version

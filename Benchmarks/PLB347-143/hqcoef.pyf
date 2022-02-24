@@ -1,0 +1,70 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module hqcoef ! in 
+    interface  ! in :hqcoef
+        function cllog(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: cllog
+        end function cllog
+        function d2nloq(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: d2nloq
+        end function d2nloq
+        function dlnloq(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: dlnloq
+        end function dlnloq
+        function c2nlobarq(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: c2nlobarq
+        end function c2nlobarq
+        function clnlobarq(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: clnlobarq
+        end function clnlobarq
+        function c2nloq(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: c2nloq
+        end function c2nloq
+        function clnloq(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: clnloq
+        end function clnloq
+        function c2log(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: c2log
+        end function c2log
+        function c2nlog(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: c2nlog
+        end function c2nlog
+        function c2nlobarg(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: c2nlobarg
+        end function c2nlobarg
+        function clnlog(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: clnlog
+        end function clnlog
+        function clnlobarg(eta,xi) ! in :hqcoef:hqcoef.f
+            double precision :: eta
+            double precision :: xi
+            real*8 :: clnlobarg
+        end function clnlobarg
+    end interface 
+end python module hqcoef
+
+! This file was auto-generated with f2py (version:1.21.2).
+! See http://cens.ioc.ee/projects/f2py2e/

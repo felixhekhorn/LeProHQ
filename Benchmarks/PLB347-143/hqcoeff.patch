@@ -1,0 +1,210 @@
+--- hqcoef.org.f	2022-02-24 12:44:20.489243006 +0100
++++ hqcoef.f	2022-02-24 12:09:27.820541416 +0100
+@@ -75,7 +75,8 @@
+       real*8 function ctg(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       ctg = 0.5d0*pi*tr*(1.d0 + eta + 0.25d0*xi)**(-3)*
+      #         (-2.d0*((1.d0 + eta - 0.25d0*xi)**2 + eta + 1.d0)*
+@@ -90,7 +91,8 @@
+       real*8 function cllog(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       cllog = 0.5d0*pi*tr*xi*(1.d0 + eta + 0.25d0*xi)**(-3.d0)*
+      #         (2.d0*dsqrt(eta*(1.d0 + eta)) -
+@@ -99,40 +101,43 @@
+ 
+       return
+       end
+-      real*8 function c2_1ga(y)
+-      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
++!       real*8 function c2_1ga(y)
++!       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++! c      include 'CONSTCOM.'
++!       parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+-      c2_1ga=2*((y**2+(1.-y)**2)*log((1.-y)/y)-1.+8.*y*(1.-y))
++!       c2_1ga=2*((y**2+(1.-y)**2)*log((1.-y)/y)-1.+8.*y*(1.-y))
+ 
+-      return 
+-      end
+-c-------------------
+-      real*8 function c2_1qb(y)
+-      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
++!       return 
++!       end
++! c-------------------
++!       real*8 function c2_1qb(y)
++!       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++! c      include 'CONSTCOM.'
++!       parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+-      c2_1qb=2*cf*((9.+5.*y)/4.+(1.+y**2)/(1.-y)*(log((1.-y)/y)-0.75))
++!       c2_1qb=2*cf*((9.+5.*y)/4.+(1.+y**2)/(1.-y)*(log((1.-y)/y)-0.75))
+ 
+-      return 
+-      end
+-c-------------------
+-      real*8 function c2_1qc(xb)
+-      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
++!       return 
++!       end
++! c-------------------
++!       real*8 function c2_1qc(xb)
++!       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++! c      include 'CONSTCOM.'
++!       parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+-      dl=log(1-xb)
++!       dl=log(1-xb)
+ 
+-      c2_1qc=-2*cf*(-((2*dl-1)*xb**2+(4*dl-6)*xb+4*dl**2-6*dl)/4.
+-     + +((2*xb**2+4*xb)*log(xb)-xb**2-4*xb
+-     --8*dilog(sngl(1-xb)))/4.+pi**2/3.
+-     + +3.*(xb**2+2*xb+4*dl)/8.+(5*xb**2+18*xb)/8. )
++!       c2_1qc=-2*cf*(-((2*dl-1)*xb**2+(4*dl-6)*xb+4*dl**2-6*dl)/4.
++!      + +((2*xb**2+4*xb)*log(xb)-xb**2-4*xb
++!      --8*dilog(sngl(1-xb)))/4.+pi**2/3.
++!      + +3.*(xb**2+2*xb+4*dl)/8.+(5*xb**2+18*xb)/8. )
+ 
+-      return 
+-      end
++!       return 
++!       end
+ c---------------------
+       real*8 function d2nloq(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+@@ -145,7 +150,8 @@
+       real*8 function dtnloq(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       call sclqt(eta,xi,clq)
+       dtnloq=cf*tr*clq
+@@ -156,7 +162,8 @@
+       real*8 function dlnloq(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       call sclql(eta,xi,clq)
+       dlnloq=cf*tr*clq
+@@ -175,7 +182,8 @@
+       real*8 function clnlobarq(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       beta=sqrt(eta/(1+eta))
+ 
+@@ -188,7 +196,8 @@
+       real*8 function ctnlobarq(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       beta=sqrt(eta/(1+eta))
+ 
+@@ -209,7 +218,8 @@
+       real*8 function clnloq(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       beta=sqrt(eta/(1+eta))
+ 
+@@ -222,7 +232,8 @@
+       real*8 function ctnloq(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       beta=sqrt(eta/(1+eta))
+ 
+@@ -256,7 +267,8 @@
+       real*8 function clnlog(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       beta=sqrt(eta/(1+eta))
+       rho=1./(1+eta)
+@@ -275,7 +287,8 @@
+       real*8 function ctnlog(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       beta=sqrt(eta/(1+eta))
+       rho=1./(1+eta)
+@@ -294,7 +307,8 @@
+       real*8 function clnlobarg(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       beta=sqrt(eta/(1+eta))
+       rho=1./(1+eta)
+@@ -308,7 +322,8 @@
+       real*8 function ctnlobarg(eta,xi)
+       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+ 
+       beta=sqrt(eta/(1+eta))
+       rho=1./(1+eta)
+@@ -12244,7 +12259,8 @@
+       double precision eta, xi, pi, ca, cf, tf
+       double precision beta, Lbeta
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+       ca = cg
+       tf = tr
+ 
+@@ -12267,7 +12283,8 @@
+       double precision eta, xi, pi, tf, ca, cf
+       double precision beta, Lbeta
+ 
+-      include 'CONSTCOM.'
++c      include 'CONSTCOM.'
++      parameter(pi=3.14159265359d0, tr=1d0/2d0, cf=4d0/3d0, cg=3d0)
+       ca = cg
+       tf = tr
+ 

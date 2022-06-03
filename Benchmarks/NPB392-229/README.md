@@ -12,8 +12,8 @@ In parallel with the original NLO heavy quark contributions [published here](htt
 - to use the fully differential implementation
   - edit (the bottom of) `run-FullyDiff.py`
   - run the file
-  - the histograms will be stored as `dat` files in the `FullyDiff/` subdirectory
-- each implementation will create a figure as `pdf` that should be similar to the original in the respective subdirectory
+  - the histograms will be stored as `.dat` files in the `FullyDiff/` subdirectory
+- each implementation will create a figure as `.pdf` that should be similar to the original in the respective subdirectory
 
 ## References
 

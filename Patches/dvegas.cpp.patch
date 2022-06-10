@@ -1,0 +1,70 @@
+--- dvegas-2.0.3/src/dvegas.cpp	2013-09-30 17:26:58.000000000 +0200
++++ dvegas-2.0.3b/dvegas-2.0.3/src/dvegas.cpp	2022-06-10 20:25:47.388115466 +0200
+@@ -40,6 +40,9 @@
+ #include <stdexcept>
+ using std::bad_alloc;
+ using std::out_of_range;
++/// EDIT FHe
++using std::domain_error;
++/// /EDIT FHe
+ #include <algorithm>
+ using std::max;
+ using std::stable_sort;
+@@ -63,6 +66,7 @@
+ #include "omnicomp.h"
+ #include "rng.h"
+ 
++
+ namespace HepSource
+ {
+ void terminate()
+@@ -257,7 +261,7 @@
+ }
+ 
+ template<typename C>
+-C& MultidimensionalArray<C>::at(const Int64 sequentialIndex) throw (out_of_range)
++C& MultidimensionalArray<C>::at(const Int64 sequentialIndex)
+ {
+   if (!(0 <= sequentialIndex && sequentialIndex < size())) {
+     throw out_of_range("MultidimensionalArray");
+@@ -266,7 +270,7 @@
+ }
+ 
+ template<typename C>
+-const C& MultidimensionalArray<C>::at(const Int64 sequentialIndex) const throw (out_of_range)
++const C& MultidimensionalArray<C>::at(const Int64 sequentialIndex) const
+ {
+   if (!(0 <= sequentialIndex && sequentialIndex < size())) {
+     throw out_of_range("MultidimensionalArray");
+@@ -275,7 +279,7 @@
+ }
+ 
+ template<typename C>
+-const vector<int> MultidimensionalArray<C>::seqIdxToIndexes(const Int64 sequentialIndex) const throw (out_of_range)
++const vector<int> MultidimensionalArray<C>::seqIdxToIndexes(const Int64 sequentialIndex) const
+ {
+   if (sequentialIndex < 0 || sequentialIndex >= _size) {
+     throw out_of_range("MultidimensionalArray");
+@@ -293,7 +297,7 @@
+ }
+ 
+ template<typename C>
+-const Int64 MultidimensionalArray<C>::indexesToSeqIdx(const vector<int>& listOfIndexes) const throw (out_of_range)
++const Int64 MultidimensionalArray<C>::indexesToSeqIdx(const vector<int>& listOfIndexes) const
+ {
+   if (listOfIndexes.size() != _dim) {
+     cerr << "error: wrong number of indexes: " << listOfIndexes.size() << endl;
+@@ -1507,8 +1511,11 @@
+   CorrelationsDetector *const & _correlationsDetector = accPtrs.correlationsDetector();
+ 
+   if (accumulators[0].efficiency() == 0.0) {
+-    cerr << "error: no hits!  Are integrand and mapping OK?" << endl;
+-    terminate();
++/// EDIT FHe
++//    cerr << "error: no hits!  Are integrand and mapping OK?" << endl;
++//    terminate();
++    throw domain_error("error: no hits!  Are integrand and mapping OK?");
++/// /EDIT FHe
+   }
+   vector<IntegrandEstimate> thisIterationStats(_f);
+   assert(thisIterationStats.size() == _allIterationsStats.size());

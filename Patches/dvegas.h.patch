@@ -1,0 +1,42 @@
+--- dvegas-2.0.3/src/dvegas.h	2013-09-30 16:49:23.000000000 +0200
++++ dvegas-2.0.3b/dvegas-2.0.3/src/dvegas.h	2022-06-10 20:29:43.268056936 +0200
+@@ -72,6 +72,7 @@
+      // copy constructor
+      Integrand(const Integrand& i) : _cDim(i._cDim), _aDim(i._aDim), _f(i._f),
+              _dDimSizes(i._dDimSizes) { }
++     virtual ~Integrand() = default;
+      
+      // assignment operator
+      virtual Integrand& operator=(const Integrand& i) {
+@@ -232,12 +233,12 @@
+   const C& operator[](const Int64 sequentialIndex) const;
+   C& operator[](const vector<int>& listOfIndexes);
+   const C& operator[](const vector<int>& listOfIndexes) const;
+-  C& at(const Int64 sequentialIndex) throw (out_of_range);
+-  const C& at(const Int64 sequentialIndex) const throw (out_of_range);
+-  C& at(const vector<int>& listOfIndexes) throw (out_of_range);
+-  const C& at(const vector<int>& listOfIndexes) const throw (out_of_range);
+-  const vector<int> seqIdxToIndexes(const Int64 sequentialIndex) const throw (out_of_range);
+-  const Int64 indexesToSeqIdx(const vector<int>& listOfIndexes) const throw (out_of_range);
++  C& at(const Int64 sequentialIndex);
++  const C& at(const Int64 sequentialIndex) const;
++  C& at(const vector<int>& listOfIndexes);
++  const C& at(const vector<int>& listOfIndexes) const;
++  const vector<int> seqIdxToIndexes(const Int64 sequentialIndex) const;
++  const Int64 indexesToSeqIdx(const vector<int>& listOfIndexes) const;
+   const vector<C> getProjection(const int dim, const Int64 projectionIterator) const;
+   void putProjection(const int dim, const Int64 projectionIterator, const vector<C>& newWeights);
+ 
+@@ -279,10 +280,10 @@
+ inline const C& MultidimensionalArray<C>::operator[](const vector<int>& listOfIndexes) const { return (*_v)[indexesToSeqIdx(listOfIndexes)]; }
+ 
+ template<typename C>
+-inline C& MultidimensionalArray<C>::at(const vector<int>& listOfIndexes) throw (out_of_range) { return (*_v)[indexesToSeqIdx(listOfIndexes)]; }
++inline C& MultidimensionalArray<C>::at(const vector<int>& listOfIndexes) { return (*_v)[indexesToSeqIdx(listOfIndexes)]; }
+ 
+ template<typename C>
+-inline const C& MultidimensionalArray<C>::at(const vector<int>& listOfIndexes) const throw (out_of_range) { return (*_v)[indexesToSeqIdx(listOfIndexes)]; }
++inline const C& MultidimensionalArray<C>::at(const vector<int>& listOfIndexes) const { return (*_v)[indexesToSeqIdx(listOfIndexes)]; }
+ 
+ // --------------------------------------------------------------
+ 

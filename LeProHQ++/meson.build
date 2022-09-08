@@ -24,6 +24,7 @@ pye_dep = dependency('python3-embed', version : '>=3.9')
 lhapdf_dep = dependency('lhapdf', version : '>=6')
 rk_dep = dependency('rk')
 dvegas_dep = dependency('dvegas')
+pineappl_capi = dependency('pineappl_capi')
 
 subdir('include')
 subdir('src')

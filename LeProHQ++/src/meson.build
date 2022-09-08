@@ -104,10 +104,18 @@ if get_option('dssv')
 endif
 
 # build
-LeProHQpp = shared_module(
-    'LeProHQpp',
-    ['Python.cpp'] + sources,
+# LeProHQpp = shared_module(
+#     'LeProHQpp',
+#     ['Python.cpp'] + sources,
+#     name_prefix: '',
+#     include_directories : [inc, configuration_inc],
+#     dependencies: [gsl_dep, gslcblas_dep, dvegas_dep, lhapdf_dep, boost_dep, rk_dep, py_dep, pye_dep, yaml_dep, pineappl_capi],
+# )
+
+executable(
+    'LeProHQpp-main',
+    ['main.cpp'] + sources,
     name_prefix: '',
     include_directories : [inc, configuration_inc],
-    dependencies: [gsl_dep, gslcblas_dep, dvegas_dep, lhapdf_dep, boost_dep, rk_dep, py_dep, pye_dep, yaml_dep],
+    dependencies: [gsl_dep, gslcblas_dep, dvegas_dep, lhapdf_dep, boost_dep, rk_dep, py_dep, pye_dep, yaml_dep, pineappl_capi],
 )

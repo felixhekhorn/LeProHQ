@@ -61,12 +61,18 @@ int testPartonic() {
 int testPineAPPL() {
     cout << "Bla" << endl;
 
-    PineAPPL::KeyVal k;
-    k.set("d", 21.123);
-    k.set("i", 2);
-    k.set("b", false);
-    k.set("s", std::string("äöüß"));
-    cout << k.get_double("d")<< "\t" << k.get_int("i") << "\t" << k.get_bool("b")<< "\t" << k.get_string("s");
+    // PineAPPL::KeyVal k;
+    // k.set_double("d", 21.123);
+    // k.set_int("i", 2);
+    // k.set_bool("b", false);
+    // k.set_string("s", "äöüß");
+    // cout << k.get_double("d")<< "\t" << k.get_int("i") << "\t" << k.get_bool("b")<< "\t" << k.get_string("s");
+    PineAPPL::Lumi lumi;
+    list<PineAPPL::LumiEntry> ls;
+    ls.push_back(PineAPPL::LumiEntry {1,-1,1.});
+    ls.push_back(PineAPPL::LumiEntry {2,3,10.});
+    lumi.add(ls);
+    cout << lumi.count() << endl;
 
     /* // create a new luminosity function for the $\gamma\gamma$ initial state
     auto* lumi = pineappl_lumi_new();

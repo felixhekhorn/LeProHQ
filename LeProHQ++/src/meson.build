@@ -109,5 +109,5 @@ LeProHQpp = shared_module(
     ['Python.cpp'] + sources,
     name_prefix: '',
     include_directories : [inc, configuration_inc],
-    dependencies: [gsl_dep, gslcblas_dep, dvegas_dep, lhapdf_dep, boost_dep, rk_dep, py_dep, pye_dep, yaml_dep],
+    dependencies: [gsl_dep, dvegas_dep, lhapdf_dep, boost_dep, rk_dep, py_dep, pye_dep, yaml_dep],
 )

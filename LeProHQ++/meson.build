@@ -9,8 +9,7 @@ project('LeProHQ',
 # mostly standard libraries
 # https://github.com/GStreamer/gstreamer/blob/master/meson.build
 cpp = meson.get_compiler('cpp')
-gsl_dep = cpp.find_library('gsl')
-gslcblas_dep = cpp.find_library('gslcblas')
+gsl_dep = dependency('gsl')
 boost_dep = dependency('boost', modules : ['system', 'filesystem', 'python3'])
 yaml_dep = dependency('yaml-cpp')
 

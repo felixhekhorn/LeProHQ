@@ -2,7 +2,7 @@
 import numba as nb
 import numpy as np
 
-from .cg0 import cg0t
+from .cg0_ import cg0t
 from .color import Kgph, Kqph
 from .partonic_vars import build_eta, build_xi
 from .utils import ln2, raw_c

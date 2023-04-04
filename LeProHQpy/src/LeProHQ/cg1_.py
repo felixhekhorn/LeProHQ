@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from .cg0 import cg0t
+from .cg0_ import cg0t
 from .color import CA, CF
 from .partonic_vars import build_eta
 from .raw import cg1_a10 as raw_cg1_a10
 from .utils import ln2, raw_c
+from . import bmsn
 
 
 def ag(proj, cc, xi):
-    """Gluon NLO resummation coefficients"""
+    """Gluon NLO resummation coefficients."""
     a12 = 1.0
     a11 = -5.0 / 2.0 + 3.0 * ln2
     if proj == "FL" and cc == "VV":
@@ -24,7 +25,7 @@ def ag(proj, cc, xi):
 
 
 def cg1t(proj, cc, xi, eta):
-    """threshold limit of cg1"""
+    """Threshold limit of cg1."""
     rho, beta, chi = build_eta(eta)
     coulomb = np.pi ** 2 / (16.0 * beta) * (2.0 * CF - CA)
     a12, a11, a10_OK, a10_QED = ag(proj, cc, xi)
@@ -34,7 +35,6 @@ def cg1t(proj, cc, xi, eta):
     )
     return cg0t(proj, cc, xi, eta) / np.pi ** 2 * (coulomb + res)
 
-
 def cg1(proj, cc, xi, eta, path=None):
-    """NLO Gluon coefficient function"""
+    """NLO gluon coefficient function."""
     return raw_c(proj, cc, xi, eta, path, "cg1", cg1t, np.log(1e-1))

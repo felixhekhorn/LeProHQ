@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from .cg0 import cg0
+from .cg0_ import cg0
 from .color import beta0_lf
 from .raw import cgBar1 as raw_cgBar1
 

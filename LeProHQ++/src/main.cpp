@@ -61,28 +61,33 @@ int testPartonic() {
 int testPineAPPL() {
     cout << "Bla" << endl;
 
-    // PineAPPL::KeyVal k;
-    // k.set_double("d", 21.123);
-    // k.set_int("i", 2);
-    // k.set_bool("b", false);
-    // k.set_string("s", "äöüß");
-    // cout << k.get_double("d")<< "\t" << k.get_int("i") << "\t" << k.get_bool("b")<< "\t" << k.get_string("s");
+    PineAPPL::KeyVal kv;
+    kv.set_double("d", 21.123);
+    kv.set_int("i", 2);
+    kv.set_bool("b", false);
+    kv.set_string("s", "äöüß");
+    // cout << kv.get_double("d")<< "\t" << kv.get_int("i") << "\t" << kv.get_bool("b")<< "\t" << kv.get_string("s");
     PineAPPL::Lumi lumi;
-    list<PineAPPL::LumiEntry> ls;
-    ls.push_back(PineAPPL::LumiEntry {1,-1,1.});
-    ls.push_back(PineAPPL::LumiEntry {2,3,10.});
-    lumi.add(ls);
-    cout << lumi.count() << endl;
+    list<PineAPPL::LumiEntry> ls_lumi;
+    ls_lumi.push_back(PineAPPL::LumiEntry {1,-1,1.});
+    ls_lumi.push_back(PineAPPL::LumiEntry {2,3,10.});
+    lumi.add(ls_lumi);
+    // cout << lumi.count() << endl;
+    list<PineAPPL::Order> ls_orders;
+    ls_orders.push_back(PineAPPL::Order {0,0,0,0});
+    list<double> ls_bins;
+    ls_bins.push_back(0.0);
+    ls_bins.push_back(1.0);
 
-    /* // create a new luminosity function for the $\gamma\gamma$ initial state
-    auto* lumi = pineappl_lumi_new();
-    int32_t pdg_ids[] = { 11, 21 };
-    double weights[] = { 1.0 };
-    pineappl_lumi_add(lumi, 1, pdg_ids, weights);
+    PineAPPL::Grid grid(lumi, ls_orders, ls_bins, kv);
+    grid.fill(.1,.1,150.,0,.5,0,1.);
+    auto *pdf = LHAPDF::mkPDF("NNPDF31_nlo_as_0118_luxqed", 0);
+    vector<double> res = grid.convolute_with_one(2212, pdf);
+    delete pdf;
+    for (auto v : res)
+        cout << v << endl;
 
-    // only LO $\alpha_\mathrm{s}^0 \alpha^2 \log^0(\xi_\mathrm{R}) \log^0(\xi_\mathrm{F})$
-    uint32_t orders[] = { 0, 1, 0, 0 };
-
+    /*
     // we bin in rapidity from 0 to 2.4 in steps of 0.1
     double bins[] = {
         0.0,1.0

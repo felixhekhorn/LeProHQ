@@ -93,7 +93,7 @@ lsdbl FullyInclusiveSoftResummed::Interpolation::Interpolator::setupArea(const v
 
 cdbl FullyInclusiveSoftResummed::Interpolation::Interpolator::evalPolyX(const bfT bf_config, cdbl y, bool isFirst) const {
     dbl res = 0.0;
-    for (const auto areas_it : bf_config) {
+    for (const auto &areas_it : bf_config) {
         auto coeffs_it = areas_it.cbegin();
         cdbl xmin = *coeffs_it;
         coeffs_it++;
@@ -110,7 +110,7 @@ cdbl FullyInclusiveSoftResummed::Interpolation::Interpolator::evalPolyX(const bf
 
 FullyInclusiveSoftResummed::cdcmplx FullyInclusiveSoftResummed::Interpolation::Interpolator::evalLogPolyN(const bfT bf_config, FullyInclusiveSoftResummed::cdcmplx N, cdbl logx) const {
     dcmplx res = 0.0;
-    for (const auto areas_it : bf_config) {
+    for (const auto &areas_it : bf_config) {
         auto coeffs_it = areas_it.cbegin();
         cdbl lnxmin = *coeffs_it;
         coeffs_it++;
@@ -146,7 +146,7 @@ FullyInclusiveSoftResummed::cdcmplx FullyInclusiveSoftResummed::Interpolation::I
     
 FullyInclusiveSoftResummed::cdcmplx FullyInclusiveSoftResummed::Interpolation::Interpolator::evalLinPolyN(const bfT bf_config, FullyInclusiveSoftResummed::cdcmplx N, cdbl logx) const {
     dcmplx res = 0.0;
-    for (const auto areas_it : bf_config) {
+    for (const auto &areas_it : bf_config) {
         auto coeffs_it = areas_it.cbegin();
         cdbl xmin = *coeffs_it;
         coeffs_it++;
@@ -216,7 +216,7 @@ cdbl FullyInclusiveSoftResummed::Interpolation::Interpolator::evaluateX(cdbl x) 
     dbl res = 0.0;
     auto ref = this->data.cbegin();
     bool isFirst = true;
-    for (const auto pj : this->config) {
+    for (const auto &pj : this->config) {
         res += ((*ref) * this->evalPolyX(pj, y, isFirst));
         ++ref;
         isFirst = false;
@@ -229,7 +229,7 @@ FullyInclusiveSoftResummed::cdcmplx FullyInclusiveSoftResummed::Interpolation::I
         throw invalid_argument("reference data and grid do not have the same size!");
     dcmplx res = 0.0;
     auto ref = this->data.cbegin();
-    for (const auto pj : this->config) {
+    for (const auto &pj : this->config) {
         if (this->isLog)
             res += ((*ref) * this->evalLogPolyN(pj, N, logx));
         else

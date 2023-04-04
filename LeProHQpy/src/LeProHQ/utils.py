@@ -12,8 +12,7 @@ ln2 = np.log(2)
 
 @nb.njit("f8(f8)", cache=True)
 def Li2(X):
-    """
-    Reimplementation of DDILOG (C332) from CERNlib :cite:`cernlib`.
+    """Reimplementation of DDILOG (C332) from CERNlib :cite:`cernlib`.
 
     Note
     ----
@@ -125,7 +124,7 @@ interpolator_1d = {}
 
 
 def load_1d_interpolation(path):
-    """Load 1D interpolator"""
+    """Load 1D interpolator."""
     # already present?
     if path in interpolator_1d:
         return interpolator_1d[path]
@@ -139,7 +138,7 @@ interpolator_2d = {}
 
 
 def load_2d_interpolation(path):
-    """Load 2D interpolator"""
+    """Load 2D interpolator."""
     # already present?
     if path in interpolator_2d:
         return interpolator_2d[path]
@@ -150,7 +149,7 @@ def load_2d_interpolation(path):
 
 
 def raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct):
-    """Abstract improved threshold limit"""
+    """Abstract improved threshold limit."""
     t = ct(proj, cc, xi, eta)
     lnxi = np.log(xi)
     if lnxi > grid_tp[0, -1]:
@@ -166,7 +165,7 @@ def raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct):
 
 
 def raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int):
-    """Abstract bulk contribution"""
+    """Abstract bulk contribution."""
     lnxi = np.log(xi)
     if lnxi > grid_bulk[0, -1]:
         raise LeProHQError(
@@ -180,16 +179,16 @@ def raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int):
 
 
 def raw_c(proj, cc, xi, eta, path, cf, ct, high):
-    """Abstract full NLO coefficient function"""
+    """Abstract full NLO coefficient function."""
     # PV coeff function?
     if proj in ["xF3", "g4", "gL"]:
         return 0.0
     if path is None:
         path = datadir
     # load grids
-    #grid_tp, a_int = load_1d_interpolation(
+    # grid_tp, a_int = load_1d_interpolation(
     #    str(path) + f"/{cf}/{cf}-{proj}_{cc}-thres-coeff.dat"
-    #)
+    # )
     grid_bulk, bulk_int = load_2d_interpolation(
         str(path) + f"/{cf}/{cf}-{proj}_{cc}-bulk.dat"
     )
@@ -198,12 +197,12 @@ def raw_c(proj, cc, xi, eta, path, cf, ct, high):
     # threshold only?
     if lneta < low:
         return ct(proj, cc, xi, eta)
-        #return raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
+        # return raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
     # bulk only?
     if lneta >= high:
         return raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int)
     # otherwise apply linear interpolation between the two
-    #tp = raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
+    # tp = raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
     tp = ct(proj, cc, xi, eta)
     b = raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int)
     return (tp * (lneta - high) + b * (low - lneta)) / (low - high)

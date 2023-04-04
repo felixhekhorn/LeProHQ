@@ -169,7 +169,7 @@ def raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int):
     lnxi = np.log(xi)
     if lnxi > grid_bulk[0, -1]:
         raise LeProHQError(
-            f"xi interpolation for threshold coeff out of grid: {xi} > {np.exp(grid_bulk[0,-1])}",
+            f"xi interpolation for bulk out of grid: {xi} > {np.exp(grid_bulk[0,-1])}",
             proj=proj,
             cc=cc,
             xi=xi,
@@ -178,7 +178,7 @@ def raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int):
     return bulk_int(np.log(eta), np.log(xi))[0, 0]
 
 
-def raw_c(proj, cc, xi, eta, path, cf, ct, high):
+def raw_c(proj, cc, xi, eta, path, cf, ct, lneta_th_mix):
     """Abstract full NLO coefficient function."""
     # PV coeff function?
     if proj in ["xF3", "g4", "gL"]:
@@ -192,17 +192,17 @@ def raw_c(proj, cc, xi, eta, path, cf, ct, high):
     grid_bulk, bulk_int = load_2d_interpolation(
         str(path) + f"/{cf}/{cf}-{proj}_{cc}-bulk.dat"
     )
-    low = grid_bulk[1, 0]
+    lneta_min = grid_bulk[1, 0]
     lneta = np.log(eta)
     # threshold only?
-    if lneta < low:
+    if lneta < lneta_min:
         return ct(proj, cc, xi, eta)
         # return raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
     # bulk only?
-    if lneta >= high:
+    if lneta >= lneta_th_mix:
         return raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int)
     # otherwise apply linear interpolation between the two
     # tp = raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
     tp = ct(proj, cc, xi, eta)
     b = raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int)
-    return (tp * (lneta - high) + b * (low - lneta)) / (low - high)
+    return (tp * (lneta - lneta_th_mix) + b * (lneta_min - lneta)) / (lneta_min - lneta_th_mix)

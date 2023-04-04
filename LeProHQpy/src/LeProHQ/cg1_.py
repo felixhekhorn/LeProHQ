@@ -35,6 +35,17 @@ def cg1t(proj, cc, xi, eta):
     )
     return cg0t(proj, cc, xi, eta) / np.pi ** 2 * (coulomb + res)
 
+def cg1hv(proj,cc,xi,eta):
+    """High virtuality limit of cg1."""
+    l = np.log(xi)
+    z = xi / (4.*(1.+eta) + xi)
+    n = xi * 4**2 * np.pi / z
+    if "F2" == proj:
+        return (bmsn.c2g2am0_aq2(z) * l**2 + bmsn.c2g2am0_aq(z) * l + bmsn.c2g2am0_a0(z)) / n
+    elif "FL" == proj:
+        return (bmsn.clg2am0_aq(z) * l + bmsn.clg2am0_a0(z)) / n
+    raise ValueError(f"High virtuality limit of {proj}_{cc} is not known!")
+
 def cg1(proj, cc, xi, eta, path=None):
     """NLO gluon coefficient function."""
     return raw_c(proj, cc, xi, eta, path, "cg1", cg1t, np.log(1e-1))

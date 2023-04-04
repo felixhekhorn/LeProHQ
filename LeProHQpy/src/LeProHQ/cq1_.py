@@ -6,7 +6,7 @@ from .cg0_ import cg0t
 from .color import Kgph, Kqph
 from .partonic_vars import build_eta, build_xi
 from .utils import ln2, raw_c
-
+from . import bmsn
 
 @nb.njit("UniTuple(f8,2)(string,string)", cache=True)
 def aq(proj, cc):
@@ -36,6 +36,16 @@ def cq1t(proj, cc, xi, eta):
         * (a11 * np.log(beta) + a10)
     )
 
+def cq1hv(proj,cc,xi,eta):
+    """High virtuality limit of cq1."""
+    l = np.log(xi)
+    z = xi / (4.*(1.+eta) + xi)
+    n = xi * 4**2 * np.pi / z
+    if "F2" == proj:
+        return (bmsn.c2ps2am0_aq2(z) * l**2 + bmsn.c2ps2am0_aq(z) * l + bmsn.c2ps2am0_a0(z)) / n
+    elif "FL" == proj:
+        return (bmsn.clps2am0_aq(z) * l + bmsn.clps2am0_a0(z)) / n
+    raise ValueError(f"High virtuality limit of {proj}_{cc} is not known!")
 
 def cq1(proj, cc, xi, eta, path=None):
     """NLO Bethe-Heitler Quark coefficient function"""

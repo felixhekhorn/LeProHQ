@@ -48,4 +48,4 @@ def cg1hv(proj,cc,xi,eta):
 
 def cg1(proj, cc, xi, eta, path=None):
     """NLO gluon coefficient function."""
-    return raw_c(proj, cc, xi, eta, path, "cg1", cg1t, np.log(1e-1))
+    return raw_c(proj, cc, xi, eta, path, "cg1", cg1t, cg1hv, np.log(1e-1), np.log(1.5e3))

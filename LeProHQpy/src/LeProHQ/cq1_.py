@@ -49,4 +49,4 @@ def cq1hv(proj,cc,xi,eta):
 
 def cq1(proj, cc, xi, eta, path=None):
     """NLO Bethe-Heitler Quark coefficient function"""
-    return raw_c(proj, cc, xi, eta, path, "cq1", cq1t, np.log(1e0))
+    return raw_c(proj, cc, xi, eta, path, "cq1", cq1t, cq1hv, np.log(1e0), np.log(1.5e3))

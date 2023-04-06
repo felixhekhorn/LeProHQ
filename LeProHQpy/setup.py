@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 # write version on the fly - inspired by numpy
 MAJOR = 0
 MINOR = 2
-MICRO = 3
+MICRO = 4
 
 repo_path = pathlib.Path(__file__).absolute().parent
 
@@ -35,7 +35,7 @@ def setup_package():
         long_description_content_type="text/markdown",
         author="F. Hekhorn",
         author_email="felix.hekhorn@mi.infn.it",
-        # url="https://github.com/N3PDF/yadism",
+        url="https://github.com/felixhekhorn/LeProHQ",
         # project_urls={
         #    "Documentation": "https://n3pdf.github.io/yadism/",
         #    "Changelog": "https://github.com/N3PDF/yadism/releases",

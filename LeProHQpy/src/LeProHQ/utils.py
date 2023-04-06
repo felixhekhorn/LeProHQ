@@ -12,8 +12,7 @@ ln2 = np.log(2)
 
 @nb.njit("f8(f8)", cache=True)
 def Li2(X):
-    """
-    Reimplementation of DDILOG (C332) from CERNlib :cite:`cernlib`.
+    """Reimplementation of DDILOG (C332) from CERNlib :cite:`cernlib`.
 
     Note
     ----
@@ -125,7 +124,7 @@ interpolator_1d = {}
 
 
 def load_1d_interpolation(path):
-    """Load 1D interpolator"""
+    """Load 1D interpolator."""
     # already present?
     if path in interpolator_1d:
         return interpolator_1d[path]
@@ -139,7 +138,7 @@ interpolator_2d = {}
 
 
 def load_2d_interpolation(path):
-    """Load 2D interpolator"""
+    """Load 2D interpolator."""
     # already present?
     if path in interpolator_2d:
         return interpolator_2d[path]
@@ -150,7 +149,7 @@ def load_2d_interpolation(path):
 
 
 def raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct):
-    """Abstract improved threshold limit"""
+    """Abstract improved threshold limit."""
     t = ct(proj, cc, xi, eta)
     lnxi = np.log(xi)
     if lnxi > grid_tp[0, -1]:
@@ -166,11 +165,11 @@ def raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct):
 
 
 def raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int):
-    """Abstract bulk contribution"""
+    """Abstract bulk contribution."""
     lnxi = np.log(xi)
     if lnxi > grid_bulk[0, -1]:
         raise LeProHQError(
-            f"xi interpolation for threshold coeff out of grid: {xi} > {np.exp(grid_bulk[0,-1])}",
+            f"xi interpolation for bulk out of grid: {xi} > {np.exp(grid_bulk[0,-1])}",
             proj=proj,
             cc=cc,
             xi=xi,
@@ -179,31 +178,42 @@ def raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int):
     return bulk_int(np.log(eta), np.log(xi))[0, 0]
 
 
-def raw_c(proj, cc, xi, eta, path, cf, ct, high):
-    """Abstract full NLO coefficient function"""
+def raw_c(proj, cc, xi, eta, path, cf, ct, chv, lneta_th_mix, lnxi_hv_mix):
+    """Abstract full NLO coefficient function."""
     # PV coeff function?
     if proj in ["xF3", "g4", "gL"]:
         return 0.0
     if path is None:
         path = datadir
     # load grids
-    #grid_tp, a_int = load_1d_interpolation(
+    # grid_tp, a_int = load_1d_interpolation(
     #    str(path) + f"/{cf}/{cf}-{proj}_{cc}-thres-coeff.dat"
-    #)
+    # )
     grid_bulk, bulk_int = load_2d_interpolation(
         str(path) + f"/{cf}/{cf}-{proj}_{cc}-bulk.dat"
     )
-    low = grid_bulk[1, 0]
+    lneta_min = grid_bulk[1, 0]
     lneta = np.log(eta)
+    lnxi_max = grid_bulk[0, -1]
+    lnxi = np.log(xi)
     # threshold only?
-    if lneta < low:
+    if lneta < lneta_min:
         return ct(proj, cc, xi, eta)
-        #return raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
+        # return raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
+    # high virtuality only?
+    if lnxi > lnxi_max:
+        return chv(proj, cc, xi, eta)
     # bulk only?
-    if lneta >= high:
-        return raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int)
-    # otherwise apply linear interpolation between the two
-    #tp = raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
-    tp = ct(proj, cc, xi, eta)
     b = raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int)
-    return (tp * (lneta - high) + b * (low - lneta)) / (low - high)
+    if lneta >= lneta_th_mix and lnxi <= lnxi_hv_mix:
+        return b
+    # threshold mix, but hv safe?
+    if lnxi <= lnxi_hv_mix:
+        # linear interpolation between threshold and bulk
+        # tp = raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
+        tp = ct(proj, cc, xi, eta)
+        return (tp * (lneta - lneta_th_mix) + b * (lneta_min - lneta)) / (lneta_min - lneta_th_mix)
+    # else we must mix high virtuality
+    # linear interpolation between high virtuality and bulk
+    hv = chv(proj, cc, xi, eta)
+    return (hv * (lnxi_hv_mix - lnxi) + b * (lnxi - lnxi_max)) / (lnxi_hv_mix - lnxi_max)

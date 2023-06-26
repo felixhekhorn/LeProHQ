@@ -1,6 +1,6 @@
 # NPB540-345
 
-The photo-production limit of heavy quark production was computed [here](https://inspirehep.net/literature/) and the authors also [published a subsequent study](https://inspirehep.net/literature/) in which they investigated the inclusive distributions: i.e. the rapidity distribution and the Feynman momentum distribution of the heavy anti-quark.
+The photo-production limit of heavy quark production was computed [here](https://inspirehep.net/literature/473492) in which they investigate the inclusive distributions: i.e. the rapidity distribution and the Feynman momentum distribution of the heavy anti-quark.
 
 ## Running
 
@@ -17,7 +17,7 @@ The photo-production limit of heavy quark production was computed [here](https:/
 
 ## References
 
-```
+```bibtex
 @article{Bojak:1998zm,
     author = "Bojak, I. and Stratmann, M.",
     title = "{Photoproduction of heavy quarks in next-to-leading order QCD with longitudinally polarized initial states}",

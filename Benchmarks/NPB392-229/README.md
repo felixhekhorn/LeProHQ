@@ -1,6 +1,6 @@
 # NPB392-229
 
-In parallel with the original NLO heavy quark contributions [published here](https://inspirehep.net/literature/335018), the authors also [published a first study](https://inspirehep.net/literature/339361) in which they investigated the inclusive distributions: i.e. the rapidity distribution and the transverse momentum distribution of the heavy anti-quark.
+In parallel with the original NLO heavy quark contributions [published here](https://inspirehep.net/literature/335018), the authors also [published a first study](https://inspirehep.net/literature/339361) in which they investigate the inclusive distributions: i.e. the rapidity distribution and the transverse momentum distribution of the heavy anti-quark.
 
 ## Running
 
@@ -17,7 +17,7 @@ In parallel with the original NLO heavy quark contributions [published here](htt
 
 ## References
 
-```
+```bibtex
 @article{Laenen:1992zk,
     author = "Laenen, Eric and Riemersma, S. and Smith, J. and van Neerven, W. L.",
     title = "{Complete O (alpha-s) corrections to heavy flavor structure functions in electroproduction}",

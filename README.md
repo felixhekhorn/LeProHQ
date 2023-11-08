@@ -26,7 +26,7 @@ Please cite
 
 - [LeProHQutils](https://github.com/felixhekhorn/LeProHQ/tree/main/LeProHQutils) contains set of helper functions.
 
-- [LeProHQpy](https://github.com/felixhekhorn/LeProHQ/tree/main/LeProHQpy) contains the stand-alone Python wrapper for the fully inclusive coefficient functions as is required by [yadism](https://n3pdf.github.io/yadism/).
+- [LeProHQpy](https://github.com/felixhekhorn/LeProHQ/tree/main/LeProHQpy) contains the stand-alone Python wrapper for the fully inclusive coefficient functions as is required by [yadism](https://github.com/NNPDF/yadism).
 
 - [Patches](https://github.com/felixhekhorn/LeProHQ/tree/main/Patches) contains a list of patches that are either required to run the C++ implementation or to run some legacy PDF codes.
 

@@ -85,3 +85,28 @@ for lab, tab in tabs.items():
         print(f"Checking {fk} in Table {lab}")
         print(df)
         print()
+
+# Check cqBarF1 alone
+tab2mod = np.loadtxt("tab2-mod.txt")
+tab2ln = tabulate(LeProHQ.cqBarF1, norm_nlo)
+for j, fk in enumerate(["FL", "F2"]):
+    df = pd.DataFrame()
+    df["N"] = ns
+    df["LeProHQ"] = tab2ln[:, 1 + j]
+    df["KMS"] = tab2mod[:, 1 + 2 * j]
+    df["LeProHQ/KMS"] = df["LeProHQ"] / df["KMS"]
+    print(f"Checking {fk} in Table 2|cqbarF1")
+    print(df)
+    print()
+
+# Check cq1 alone
+tab2ln = tabulate(LeProHQ.cq1, norm_nlo)
+for j, fk in enumerate(["FL", "F2"]):
+    df = pd.DataFrame()
+    df["N"] = ns
+    df["LeProHQ"] = tab2ln[:, 1 + j]
+    df["KMS"] = tab2mod[:, 0 + 2 * j]
+    df["LeProHQ/KMS"] = df["LeProHQ"] / df["KMS"]
+    print(f"Checking {fk} in Table 2|cq1")
+    print(df)
+    print()

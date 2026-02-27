@@ -10,38 +10,48 @@ import hqcoef
 # fs = (("dq1","F2"),"d2nloq")
 # fs = (("cg1","F2"),"c2nlog")
 # fs = (("cgBar1","F2"),"c2nlobarg")
-fs = (("cq1", "F2"), "c2nloq")
+# fs = (("cq1", "F2"), "c2nloq")
+fs = (("cq1", "FL"), "clnloq")
 # fs = (("cqBarF1","F2"),"c2nlobarq")
 xis = np.geomspace(1e-3, 1e3, 30)
 etas = np.geomspace(1e-3, 1e3, 30)
-threshold = 1e-2
+# threshold = 1e-2
 
 # collect data
 me = []
 other = []
 for xi in xis:
     for eta in etas:
-        me.append(LeProHQ.__getattribute__(fs[0][0])(fs[0][1], "VV", xi, eta))
-        other.append(hqcoef.__getattribute__(fs[1])(eta, xi))
+        me.append(getattr(LeProHQ, fs[0][0])(fs[0][1], "VV", xi, eta))
+        other.append(getattr(hqcoef, fs[1])(eta, xi))
 me = np.array(me).reshape(len(xis), len(etas))
 other = np.array(other).reshape(len(xis), len(etas))
 
 # plot
-fig, ax = plt.subplots(1, 1)
-cax = ax.imshow(
-    np.log(np.abs(me / other - 1.0)),
-    extent=(
-        np.log(etas).min(),
-        np.log(etas).max(),
-        np.log(xis).min(),
-        np.log(xis).max(),
-    ),
-    origin="lower",
-)
-ax.set_xlabel(r"$\log(\eta)$")
-ax.set_ylabel(r"$\log(\xi)$")
-cbar = fig.colorbar(cax)
-cbar.set_label("rel. Error")
+fig, axs = plt.subplots(2, 2)
+for data, lab, axs in zip(
+    [me / other - 1.0, me - other], ["log10(rel. Error)", "log10(abs. Error)"], axs
+):
+    cax = axs[0].imshow(
+        np.log10(np.abs(data)),
+        extent=(
+            np.log10(etas).min(),
+            np.log10(etas).max(),
+            np.log10(xis).min(),
+            np.log10(xis).max(),
+        ),
+        origin="lower",
+    )
+    axs[0].set_xlabel(r"$\log_{10}(\eta)$")
+    axs[0].set_ylabel(r"$\log_{10}(\xi)$")
+    cbar = fig.colorbar(cax)
+    cbar.set_label(lab)
+    axs[1].hist(np.log10(np.abs(data)).flatten(), 30)
+    axs[1].set_xlabel(lab)
+    axs[1].set_ylabel("Pixel")
+
+
+fig.tight_layout()
 fig.savefig(f"{fs[0][0]}-{fs[0][1]}.pdf")
 plt.close(fig)
 # print(me)

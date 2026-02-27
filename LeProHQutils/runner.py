@@ -6,6 +6,7 @@ from LeProHQpp import (
     DynamicScaleFactors,
     FullyDiffLeptoProduction,
     InclusiveLeptoProduction,
+    Projection,
 )
 
 
@@ -49,7 +50,7 @@ def global_setter(o, p):
         raise KeyError("no called function set")
     # global getter and setter
     if "projection" in p:
-        o.setProjection(p["projection"])
+        o.setProjection(getattr(Projection, p["projection"]))
     if "nlf" in p:
         o.setNumberOfLightFlavours(p["nlf"])
     if "Q2" in p:

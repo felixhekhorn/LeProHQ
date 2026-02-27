@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import re
-
-from joblib import Parallel, delayed
+from multiprocessing import Pool
 
 from LeProHQpp import (
     DynamicScaleFactors,
@@ -11,38 +9,44 @@ from LeProHQpp import (
 )
 
 
-# provide runner
-class AbstractRunner:
-    """abstract wrapper to run several jobs in parallel"""
+class Runner:
+    """Wrapper to run several jobs in parallel"""
 
     def __init__(self, callee):
-        """constructor"""
-        self.l = []
+        """Constructor"""
+        self.args = []
         self.callee = callee
+        self.output = []
+
+    def clear(self):
+        """
+        Clear state
+        """
+        self.args.clear()
+        self.output.clear()
 
     def append(self, e):
         """
-        append an element
+        Append an element
         @param e element
         """
-        self.l.append(e)
+        self.args.append(e)
 
     def run(self, n_jobs=None):
         """
-        computes all elements
+        Compute all elements
         @param n_jobs number of parallel threads
         """
-        print("Computing %d points ..." % len(self.l))
-        return Parallel(n_jobs=n_jobs, backend="threading")(
-            delayed(self.callee)(e) for e in self.l
-        )
+        print("Computing %d points ..." % len(self.args))
+        with Pool(n_jobs) as p:
+            self.output = p.map(self.callee, self.args)
+        return self.output
 
 
 def global_setter(o, p):
-    """set global vars"""
+    """Set global vars"""
     if "run" not in p:
         raise KeyError("no called function set")
-    run = p["run"]
     # global getter and setter
     if "projection" in p:
         o.setProjection(p["projection"])
@@ -89,38 +93,33 @@ def global_setter(o, p):
     if "Q2minByHVQDIS" in p:
         o.setQ2minByHVQDIS(p["Q2minByHVQDIS"])
     # int config has to be set AFTER flags!
+    run = p["run"]
     if "IntegrationConfig" in p:
-        method = run if type("") == type(run) else run[0]
+        method = run if isinstance(run, str) else run[0]
         for k in p["IntegrationConfig"]:
             setattr(o.getIntegrationConfig(method), k, p["IntegrationConfig"][k])
 
 
 def global_run(o, p):
-    """run global functions"""
+    """Run global functions"""
     run = p["run"]
     # find run
-    if type("") == type(run):
-        if "F" == run:
-            p["res"] = o.F()
-        elif "sigma" == run:
-            p["res"] = o.sigma()
-        else:
-            if None == re.match("^[cd][gq](Bar[RF]?)?[01]_[VA][VA]$", run):
-                raise ValueError("unknown function: " + run)
-            p["res"] = getattr(o, run)()
+    if isinstance(run, str):
+        p["res"] = getattr(o, run)()
+    elif isinstance(run, tuple) or isinstance(run, list):
+        p["res"] = getattr(o, run[0])(*run[1:])
 
 
 def global_post_run(o, p):
-    """post run stuff"""
-    if "IntegrationOutput" in p:
-        p["IntegrationOutput"] = o.getIntegrationOutput()
+    """Post-process run stuff"""
+    p["IntegrationOutput"] = o.getIntegrationOutput()
     if "msg" in p:
         print(p["msg"])
 
 
 # thread worker for Inclusive
 def run_inclusive(p):
-    """inclusive working method"""
+    """Inclusive working method"""
     # setup
     o = InclusiveLeptoProduction(*p["objArgs"])
 
@@ -131,34 +130,17 @@ def run_inclusive(p):
 
     # runners
     global_run(o, p)
-    run = p["run"]
-    if tuple == type(run) or list == type(run):
-        if "dF_dHAQTransverseMomentum" == run[0]:
-            p["res"] = o.dF_dHAQTransverseMomentum(run[1])
-        elif "dF_dHAQTransverseMomentumScaling" == run[0]:
-            p["res"] = o.dF_dHAQTransverseMomentumScaling(run[1])
-        elif "dF_dHAQRapidity" == run[0]:
-            p["res"] = o.dF_dHAQRapidity(run[1])
-        elif "dF_dHAQFeynmanX" == run[0]:
-            p["res"] = o.dF_dHAQFeynmanX(run[1])
-        else:
-            # Util.pWarn(p)
-            raise ValueError("unknown function: " + run)
     # post process
     global_post_run(o, p)
     return p
 
 
-class InclusiveRunner(AbstractRunner):
-    """wrapper for InclusiveLeptoProduction to run several jobs in parallel"""
-
-    def __init__(self):
-        """constructor"""
-        super().__init__(run_inclusive)
+InclusiveRunner = Runner(run_inclusive)
+"""Wrapper for InclusiveLeptoProduction to run several jobs in parallel"""
 
 
 def run_fully_diff(p):
-    """fully differential working method"""
+    """Fully differential working method"""
     # setup
     o = FullyDiffLeptoProduction(*p["objArgs"])
 
@@ -183,9 +165,5 @@ def run_fully_diff(p):
     return p
 
 
-class FullyDiffRunner(AbstractRunner):
-    """wrapper for FullyDiffLeptoProduction to run several jobs in parallel"""
-
-    def __init__(self):
-        """constructor"""
-        super().__init__(run_fully_diff)
+FullyDiffRunner = Runner(run_fully_diff)
+"""Wrapper for FullyDiffLeptoProduction to run several jobs in parallel"""

@@ -4,12 +4,12 @@ import numpy as np
 from runner import InclusiveRunner
 
 # global parameters
-Delta = 1e-6
 nlf = 3
 m2 = 1.0
+Delta = 1e-6
 intCfg = {"verbosity": 1}
 fnc = "cq1"
-proj = "F2"
+proj = "FL"
 cc = "VV"
 path = f"{fnc}-{proj}_{cc}-bulk.dat"
 
@@ -27,18 +27,17 @@ lnetas = np.linspace(lneta_min, lneta_max, n_eta)
 for lnxi in lnxis:
     for lneta in lnetas:
         q2 = np.exp(lnxi) * m2
-        partonic_s = 4.0 * m2 + 4.0 * m2 * np.exp(lneta)
         e = {
             "objArgs": (nlf, m2, Delta),
             "Q2": q2,
-            "partonicS": partonic_s,
+            "partonicEta": np.exp(lneta),
             "projection": proj,
             "run": f"{fnc}_{cc}",
             "IntegrationConfig": intCfg,
         }
         InclusiveRunner.append(e)
 # Run!
-grid = InclusiveRunner.run()
+grid = InclusiveRunner.run(5)
 # resort
 res_grid = np.array(list(map(lambda e: e["res"], grid))).reshape(n_xi, n_eta)
 # insert borders

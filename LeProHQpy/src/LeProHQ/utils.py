@@ -154,7 +154,7 @@ def raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct):
     lnxi = np.log(xi)
     if lnxi > grid_tp[0, -1]:
         raise LeProHQError(
-            f"xi interpolation for threshold coeff out of grid: {xi} > {np.exp(grid_tp[0,-1])}",
+            f"xi interpolation for threshold coeff out of grid: {xi} > {np.exp(grid_tp[0, -1])}",
             proj=proj,
             cc=cc,
             xi=xi,
@@ -169,13 +169,13 @@ def raw_cb(proj, cc, xi, eta, grid_bulk, bulk_int):
     lnxi = np.log(xi)
     if lnxi > grid_bulk[0, -1]:
         raise LeProHQError(
-            f"xi interpolation for bulk out of grid: {xi} > {np.exp(grid_bulk[0,-1])}",
+            f"xi interpolation for bulk out of grid: {xi} > {np.exp(grid_bulk[0, -1])}",
             proj=proj,
             cc=cc,
             xi=xi,
             eta=eta,
         )
-    return bulk_int(np.log(eta), np.log(xi))[0, 0]
+    return bulk_int(np.log(eta), lnxi)[0, 0]
 
 
 def raw_c(proj, cc, xi, eta, path, cf, ct, chv, lneta_th_mix, lnxi_hv_mix):
@@ -212,8 +212,12 @@ def raw_c(proj, cc, xi, eta, path, cf, ct, chv, lneta_th_mix, lnxi_hv_mix):
         # linear interpolation between threshold and bulk
         # tp = raw_ctp(proj, cc, xi, eta, grid_tp, a_int, ct)
         tp = ct(proj, cc, xi, eta)
-        return (tp * (lneta - lneta_th_mix) + b * (lneta_min - lneta)) / (lneta_min - lneta_th_mix)
+        return (tp * (lneta - lneta_th_mix) + b * (lneta_min - lneta)) / (
+            lneta_min - lneta_th_mix
+        )
     # else we must mix high virtuality
     # linear interpolation between high virtuality and bulk
     hv = chv(proj, cc, xi, eta)
-    return (hv * (lnxi_hv_mix - lnxi) + b * (lnxi - lnxi_max)) / (lnxi_hv_mix - lnxi_max)
+    return (hv * (lnxi_hv_mix - lnxi) + b * (lnxi - lnxi_max)) / (
+        lnxi_hv_mix - lnxi_max
+    )

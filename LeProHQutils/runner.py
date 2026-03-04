@@ -39,8 +39,11 @@ class Runner:
         @param n_jobs number of parallel threads
         """
         print("Computing %d points ..." % len(self.args))
-        with Pool(n_jobs) as p:
-            self.output = p.map(self.callee, self.args)
+        if n_jobs == 1:
+            self.output = map(self.callee, self.args)
+        else:
+            with Pool(n_jobs) as p:
+                self.output = p.map(self.callee, self.args)
         return self.output
 
 

@@ -190,7 +190,7 @@ def raw_c(proj, cc, xi, eta, path, cf, ct, chv, lneta_th_mix, lnxi_hv_mix):
     #    str(path) + f"/{cf}/{cf}-{proj}_{cc}-thres-coeff.dat"
     # )
     grid_bulk, bulk_int = load_2d_interpolation(
-        str(path) + f"/{cf}/{cf}-{proj}_{cc}-bulk.dat"
+        str(path) + f"/{cf}-{proj}_{cc}-bulk.dat"
     )
     lneta_min = grid_bulk[1, 0]
     lneta = np.log(eta)
